@@ -1,32 +1,21 @@
 package main
 
 import (
-	"flag"
+	"hostListen/base"
+	"hostListen/client"
+	"hostListen/server"
+	"hostListen/user"
 	"time"
 )
 
-var (
-	is_server *bool
-	is_user   *bool
-	listen    *string
-)
-
-func init() {
-	is_server = flag.Bool("s", false, "server")
-	is_user = flag.Bool("u", false, "getdata")
-	listen = flag.String("l", ":12345", "listen addr")
-
-	flag.Parse()
-}
-
 func main() {
-	if *is_server {
-		Service()
+	if *base.Is_server {
+		server.Service()
 		return
 	}
 
-	if *is_user {
-		User()
+	if *base.Is_user {
+		user.User()
 		return
 	}
 
@@ -34,7 +23,7 @@ func main() {
 	t := time.NewTicker(time.Minute / 10)
 	defer t.Stop()
 	for {
-		Client()
+		client.Client()
 		<-t.C
 	}
 
