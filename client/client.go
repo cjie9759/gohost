@@ -18,20 +18,25 @@ import (
 )
 
 func Client() {
-	//连接远程rpc服务
-	conn, err := rpc.DialHTTP("tcp", *base.Listen)
-	if err != nil {
-		log.Println(err)
-	}
+	t := time.NewTicker(time.Minute / 10)
+	defer t.Stop()
+	for {
+		//连接远程rpc服务
+		<-t.C
+		conn, err := rpc.DialHTTP("tcp", *base.Listen)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
 
-	//调用方法
-	result := ""
-	err = conn.Call("Server.Save", getHostInfo(), &result)
-	if err != nil {
-		log.Println(err)
-		return
+		//调用方法
+		result := ""
+		err = conn.Call("Server.Save", getHostInfo(), &result)
+		if err != nil {
+			log.Println(err)
+		}
+		log.Println("server return", result)
 	}
-	log.Println("server return", result)
 }
 
 func getHostInfo() *base.HostInfo {

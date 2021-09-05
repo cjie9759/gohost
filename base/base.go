@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"sync"
 )
 
 type HostInfo struct {
@@ -35,6 +36,10 @@ func (t *HostInfo) String() string {
 }
 
 var HostData = make(map[string][]HostInfo)
+
+var HostDataLock = new(sync.RWMutex)
+
+// var HostData = make(syncmap[string][]HostInfo)
 
 var (
 	Is_server *bool

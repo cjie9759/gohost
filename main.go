@@ -5,7 +5,6 @@ import (
 	"hostListen/client"
 	"hostListen/server"
 	"hostListen/user"
-	"time"
 )
 
 func main() {
@@ -20,11 +19,11 @@ func main() {
 	}
 
 	// 客户端
-	t := time.NewTicker(time.Minute / 10)
-	defer t.Stop()
-	for {
-		client.Client()
-		<-t.C
-	}
+	client.Client()
+	// <-t.C
+	// t := time.NewTicker(time.Minute / 10)
+	// defer t.Stop()
+	// for {
+	// }
 
 }
