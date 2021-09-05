@@ -23,8 +23,11 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 		return errors.New("sid is null")
 	}
 
+	// find new host
 	if base.HostData[h.Sid] == nil {
 		base.HostData[h.Sid] = make([]base.HostInfo, 0)
+		log.Println("find a new host")
+		base.Mail.Set("cjie9759@qq.com", "HostListen find a new host", h.String())
 	}
 
 	base.HostData[h.Sid] = append(base.HostData[h.Sid], *h)
@@ -40,6 +43,8 @@ func Service() {
 	rpc.Register(new(Server))
 	//绑定http协议
 	rpc.HandleHTTP()
+	// rpc.Accept()
+	// rpc.DefaultServer.ServeHTTP()
 	//监听服务
 	fmt.Println("开始监听", *base.Listen)
 	err := http.ListenAndServe(*base.Listen, nil)

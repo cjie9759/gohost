@@ -31,13 +31,14 @@ func Client() {
 		log.Println(err)
 		return
 	}
-	log.Println(result)
+	log.Println("server return", result)
 }
 
 func getHostInfo() *base.HostInfo {
 	cc, _ := cpu.Counts(false)
 	ct, _ := cpu.Percent(time.Microsecond*3, false)
-	c := fmt.Sprint(cc, ct)
+	cn, _ := cpu.Info()
+	c := fmt.Sprint(cc, ct, cn[0].ModelName)
 
 	d1, _ := disk.Usage("./")
 	d := fmt.Sprint(d1.Used/1024/1024/1024, "G/", d1.Total/1024/1024/1024, "G/", d1.UsedPercent)
@@ -55,7 +56,7 @@ func getHostInfo() *base.HostInfo {
 	ip := strings.Split(conn.LocalAddr().String(), ":")[0]
 
 	sid1 := md5.Sum([]byte(
-		fmt.Sprint(hostname, ip, "cj")))
+		fmt.Sprint(hostname, ip, "cj", cn[0].ModelName)))
 	// sid := make([]byte, 16)
 
 	data := &base.HostInfo{

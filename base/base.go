@@ -1,16 +1,37 @@
 package base
 
-import "flag"
+import (
+	"bytes"
+	"flag"
+	"fmt"
+)
 
 type HostInfo struct {
 	Sid      string
 	HostName string
 	SysInfo  string
 	Ip       string
+	Sip      string
 	Mem      string
 	Cpu      string
 	Disk     string
 	Date     int
+}
+
+func (t *HostInfo) Bytes() []byte {
+	a := bytes.NewBuffer(nil)
+	fmt.Fprintln(a, "Sid", t.Sid)
+	fmt.Fprintln(a, "HostName", t.HostName)
+	fmt.Fprintln(a, "SysInfo", t.SysInfo)
+	fmt.Fprintln(a, "Ip", t.Ip)
+	fmt.Fprintln(a, "Mem", t.Mem)
+	fmt.Fprintln(a, "Cpu", t.Cpu)
+	fmt.Fprintln(a, "Disk", t.Disk)
+	fmt.Fprintln(a, "Date", t.Date)
+	return a.Bytes()
+}
+func (t *HostInfo) String() string {
+	return string(t.Bytes())
 }
 
 var HostData = make(map[string][]HostInfo)
