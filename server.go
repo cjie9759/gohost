@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,23 +18,41 @@ type HostInfo struct {
 	Disk     string
 	Date     int
 }
+
+var hostData = make(map[string][]HostInfo)
+
 type Server struct {
 }
 
-//函数名首字母大写
-//第一个参数为接收参数，第二个参数是返回结果，必须是指针类型
-//函数结果必须返回一个error
+func (l *Server) GetData(h int, result *map[string][]HostInfo) error {
+	*result = hostData
+	return nil
+}
 func (l *Server) Save(h *HostInfo, result *string) error {
-	*result = "I receive"
-	fmt.Println()
-	fmt.Println("Sid", h.Sid)
-	fmt.Println("HostName", h.HostName)
-	fmt.Println("SysInfo", h.SysInfo)
-	fmt.Println("Ip", h.Ip)
-	fmt.Println("Mem", h.Mem)
-	fmt.Println("Cpu", h.Cpu)
-	fmt.Println("Disk", h.Disk)
-	fmt.Println("Date", h.Date)
+	*result = "I see"
+	log.Println("recive a msg")
+	if h.Sid == "" {
+		return errors.New("sid is null")
+	}
+
+	if hostData[h.Sid] == nil {
+		hostData[h.Sid] = make([]HostInfo, 0)
+	}
+
+	hostData[h.Sid] = append(hostData[h.Sid], *h)
+	if len(hostData[h.Sid]) > 90 {
+		*result = "is much"
+		// 转储
+	}
+	// fmt.Println()
+	// fmt.Println("Sid", h.Sid)
+	// fmt.Println("HostName", h.HostName)
+	// fmt.Println("SysInfo", h.SysInfo)
+	// fmt.Println("Ip", h.Ip)
+	// fmt.Println("Mem", h.Mem)
+	// fmt.Println("Cpu", h.Cpu)
+	// fmt.Println("Disk", h.Disk)
+	// fmt.Println("Date", h.Date)
 	return nil
 }
 
