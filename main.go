@@ -9,7 +9,7 @@ import (
 
 func main() {
 	if *base.Is_server {
-		server.Service()
+		server.TlsService()
 		return
 	}
 

@@ -2,6 +2,7 @@ package base
 
 import (
 	"bytes"
+	_ "embed"
 	"flag"
 	"fmt"
 	"sync"
@@ -54,3 +55,9 @@ func init() {
 
 	flag.Parse()
 }
+
+//go:embed pem/fullchain.pem
+var Cert []byte
+
+//go:embed pem/privkey.pem
+var Key []byte
