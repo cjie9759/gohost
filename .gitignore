@@ -1,2 +1,5 @@
 config.go
 *.pem
+launch.json
+*.crt
+*.key

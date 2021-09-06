@@ -2,6 +2,8 @@ package client
 
 import (
 	"crypto/md5"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/hex"
 	"fmt"
 	"hostListen/base"
@@ -17,25 +19,46 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
+func Con() (*tls.Conn, error) {
+	certPool := x509.NewCertPool()
+	certPool.AppendCertsFromPEM(base.SCert)
+
+	cert, _ := tls.X509KeyPair(base.CCert, base.CKey)
+	config := &tls.Config{
+		InsecureSkipVerify: false,
+		Certificates:       []tls.Certificate{cert},
+		RootCAs:            certPool,
+	}
+	conn, err := tls.Dial("tcp", *base.Listen, config)
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
+}
 func Client() {
 	t := time.NewTicker(time.Minute / 10)
 	defer t.Stop()
-	for {
-		//连接远程rpc服务
-		<-t.C
-		conn, err := rpc.DialHTTP("tcp", *base.Listen)
+	f := func() {
+		conn, err := Con()
 		if err != nil {
 			log.Println(err)
-			continue
+			return
 		}
+		defer conn.Close()
+		client := rpc.NewClient(conn)
 
 		//调用方法
 		result := ""
-		err = conn.Call("Server.Save", getHostInfo(), &result)
+		err = client.Call("Server.Save", getHostInfo(), &result)
 		if err != nil {
 			log.Println(err)
+			return
 		}
 		log.Println("server return", result)
+	}
+	for {
+		<-t.C
+		f()
 	}
 }
 

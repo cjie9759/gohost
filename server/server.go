@@ -2,6 +2,7 @@ package server
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"hostListen/base"
@@ -67,33 +68,37 @@ func init() {
 }
 
 func TlsService() {
-
-	// log.Println(key)
 	//注册服务
 	s := rpc.NewServer()
 	s.Register(new(Server))
-	hs := &http.Server{
-		Addr:           *base.Listen,
-		Handler:        s,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-		TLSConfig:      &tls.Config{},
-	}
-	var err error
-	hs.TLSConfig.Certificates = make([]tls.Certificate, 1)
 
-	hs.TLSConfig.Certificates[0], err =
-		tls.X509KeyPair(base.Cert, base.Key)
-	if err != nil {
-		log.Fatalln(err)
+	cert, _ := tls.X509KeyPair(base.SCert, base.SKey)
+	certPool := x509.NewCertPool()
+	certPool.AppendCertsFromPEM(base.CCert)
+	config := &tls.Config{
+		Certificates: []tls.Certificate{cert},
+		ClientAuth:   tls.RequireAndVerifyClientCert,
+		ClientCAs:    certPool,
 	}
-
+	l, err := tls.Listen("tcp", *base.Listen, config)
 	fmt.Println("开始监听", *base.Listen)
-	err = hs.ListenAndServeTLS("", "")
+	s.Accept(l)
+
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// https
+	// hs := &http.Server{
+	// 	Addr:           *base.Listen,
+	// 	Handler:        s,
+	// 	ReadTimeout:    10 * time.Second,
+	// 	WriteTimeout:   10 * time.Second,
+	// 	MaxHeaderBytes: 1 << 20,
+	// 	TLSConfig:      config,
+	// }
+	// fmt.Println("开始监听", *base.Listen)
+	// err := hs.ListenAndServeTLS("", "")
+
 }
 func Service() {
 	//注册服务

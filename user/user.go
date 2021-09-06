@@ -3,8 +3,10 @@ package user
 import (
 	"fmt"
 	"hostListen/base"
+	"hostListen/client"
 	"log"
 	"net/rpc"
+	"time"
 )
 
 func showHostData() {
@@ -17,19 +19,29 @@ func showHostData() {
 	}
 }
 func User() {
-	//连接远程rpc服务
-	conn, err := rpc.DialHTTP("tcp", *base.Listen)
-	if err != nil {
-		log.Println(err)
+	t := time.NewTicker(time.Minute / 10)
+	defer t.Stop()
+	f := func() {
+		conn, err := client.Con()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		defer conn.Close()
+		client := rpc.NewClient(conn)
+
+		//调用方法
+		result := base.HostData
+		err = client.Call("Server.GetData", 1, &result)
+		showHostData()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Println("server return", result)
 	}
-
-	//调用方法
-	result := base.HostData
-	err = conn.Call("Server.GetData", 1, &result)
-	showHostData()
-
-	if err != nil {
-		log.Println(err)
-		return
+	for {
+		<-t.C
+		f()
 	}
 }

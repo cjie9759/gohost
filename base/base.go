@@ -56,8 +56,20 @@ func init() {
 	flag.Parse()
 }
 
-//go:embed pem/fullchain.pem
-var Cert []byte
+// //go:embed pem/fullchain.pem
+// var Cert []byte
 
-//go:embed pem/privkey.pem
-var Key []byte
+// //go:embed pem/privkey.pem
+// var Key []byte
+
+//go:embed pem/client.crt
+var CCert []byte
+
+//go:embed pem/client.key
+var CKey []byte
+
+//go:embed pem/server.crt
+var SCert []byte
+
+//go:embed pem/server.key
+var SKey []byte
