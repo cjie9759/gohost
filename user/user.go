@@ -10,12 +10,9 @@ import (
 )
 
 func showHostData() {
-	for k, v := range base.HostData {
-		fmt.Println("Host", k)
-		for _, v1 := range v {
-			fmt.Println()
-			fmt.Println(v1.String())
-		}
+	for _, v := range base.HostData {
+		v1 := v[len(v)-1]
+		fmt.Println(v1.String())
 	}
 }
 func User() {
