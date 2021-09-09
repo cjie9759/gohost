@@ -23,15 +23,15 @@ type HostInfo struct {
 
 func (t *HostInfo) Bytes() []byte {
 	a := bytes.NewBuffer(nil)
-	fmt.Fprintln(a, "Sid", t.Sid, "				</br>")
-	fmt.Fprintln(a, "HostName", t.HostName, "				</br>")
-	fmt.Fprintln(a, "SysInfo", t.SysInfo, "				</br>")
-	fmt.Fprintln(a, "Ip", t.Ip, "				</br>")
-	fmt.Fprintln(a, "Mem", t.Mem, "				</br>")
-	fmt.Fprintln(a, "Cpu", t.Cpu, "				</br>")
-	fmt.Fprintln(a, "Disk", t.Disk, "				</br>")
+	fmt.Fprintln(a, "Sid", t.Sid)
+	fmt.Fprintln(a, "HostName", t.HostName)
+	fmt.Fprintln(a, "SysInfo", t.SysInfo)
+	fmt.Fprintln(a, "Ip", t.Ip)
+	fmt.Fprintln(a, "Mem", t.Mem)
+	fmt.Fprintln(a, "Cpu", t.Cpu)
+	fmt.Fprintln(a, "Disk", t.Disk)
 	d := time.Unix(int64(t.Date), 0).Local().Format("01/02 15:04:05")
-	fmt.Fprintln(a, "Date", d, "				</br>")
+	fmt.Fprintln(a, "Date", d)
 	return a.Bytes()
 }
 func (t *HostInfo) String() string {

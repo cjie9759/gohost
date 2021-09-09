@@ -4,6 +4,8 @@ github.com/cjie9759/goWeb v1.0.0 h1:zLYR7w1WW3fgZAvljMe+xVDhV4FqaiUUX95Jkwhb+5A=
 github.com/cjie9759/goWeb v1.0.0/go.mod h1:myHT4KOyt0ETIIrSE5AiWPLuZx9px2BjIgY2TRp4/tY=
 github.com/cjie9759/goWeb v1.0.3 h1:voPvv9cS9PrwkZQMPhB6lmfKu5SFVB6bfvlw1fgyxT8=
 github.com/cjie9759/goWeb v1.0.3/go.mod h1:myHT4KOyt0ETIIrSE5AiWPLuZx9px2BjIgY2TRp4/tY=
+github.com/cjie9759/goWeb v1.0.4 h1:poW4YjNm4PVERSjZ9KPojBi2YwXck+umBsUbcu+wNV0=
+github.com/cjie9759/goWeb v1.0.4/go.mod h1:myHT4KOyt0ETIIrSE5AiWPLuZx9px2BjIgY2TRp4/tY=
 github.com/go-ole/go-ole v1.2.5 h1:t4MGB5xEDZvXI+0rMjjsfBsD7yAgp/s9ZDkL1JndXwY=
 github.com/go-ole/go-ole v1.2.5/go.mod h1:pprOEPIfldk/42T2oK7lQ4v4JSDwmV0As9GaiUsvbm0=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
@@ -21,3 +23,5 @@ golang.org/x/sys v0.0.0-20190916202348-b4ddaad3f8a3/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20210816074244-15123e1e1f71/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210903071746-97244b99971b h1:3Dq0eVHn0uaQJmPO+/aYPI/fRMqdrVDbu7MQcku54gg=
 golang.org/x/sys v0.0.0-20210903071746-97244b99971b/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.0.0-20210908233432-aa78b53d3365 h1:6wSTsvPddg9gc/mVEEyk9oOAoxn+bT4Z9q1zx+4RwA4=
+golang.org/x/sys v0.0.0-20210908233432-aa78b53d3365/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=

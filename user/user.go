@@ -35,7 +35,7 @@ func User() {
 			log.Println(err)
 			return
 		}
-		log.Println("server return", result)
+		log.Println("server return")
 	}
 	for {
 		<-t.C
