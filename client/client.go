@@ -25,7 +25,7 @@ func Con() (*tls.Conn, error) {
 
 	cert, _ := tls.X509KeyPair(base.CCert, base.CKey)
 	config := &tls.Config{
-		InsecureSkipVerify: false,
+		InsecureSkipVerify: true,
 		Certificates:       []tls.Certificate{cert},
 		RootCAs:            certPool,
 	}

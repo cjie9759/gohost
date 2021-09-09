@@ -33,7 +33,7 @@ func liten() {
 			t := int(time.Now().Unix()) - h.Date
 			if t > 60 {
 				// alert
-				base.Mail.Set(base.UserMail, "host lost "+h.Sid, h.String()).Send()
+				base.Mail.Set(base.UserMail, "host lost "+h.HostName+"  "+h.Sid, h.String()).Send()
 				delete(base.HostData, h.Sid)
 			}
 		}
@@ -52,12 +52,14 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 	if base.HostData[h.Sid] == nil {
 		base.HostData[h.Sid] = make([]base.HostInfo, 0)
 		log.Println("find a new host")
-		base.Mail.Set(base.UserMail, "HostListen find a new host", h.String()).Send()
+		base.Mail.Set(base.UserMail, "HostListen find "+h.HostName+"  "+h.Sid, h.String()).Send()
 	}
-
+	// 使用系统时间
+	h.Date = int(time.Now().Unix())
 	base.HostData[h.Sid] = append(base.HostData[h.Sid], *h)
 	if len(base.HostData[h.Sid]) > 90 {
 		*result = "is much "
+		base.HostData[h.Sid] = base.HostData[h.Sid][80:]
 		// 转储
 	}
 	return nil
