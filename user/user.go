@@ -10,6 +10,8 @@ import (
 )
 
 func showHostData() {
+	// fmt.Printf("\x1bc")
+	fmt.Printf("\x1b[2J")
 	for _, v := range base.HostData {
 		v1 := v[len(v)-1]
 		fmt.Println(v1.String())
