@@ -56,8 +56,9 @@ func init() {
 	Is_user = flag.Bool("u", false, "getdata")
 	Listen = flag.String("l", ":12345", "listen addr")
 	MailList = &[]string{
-		"cjie9759@qq.com",
-		"1622762650@qq.com"}
+		"1622762650@qq.com",
+		// "cjie1704@qq.com",
+		"cjie9759@qq.com"}
 	flag.Parse()
 }
 

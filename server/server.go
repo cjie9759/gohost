@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"net/rpc"
-	"strings"
 	"time"
 )
 
@@ -34,7 +33,7 @@ func liten() {
 			t := int(time.Now().Unix()) - h.Date
 			if t > 60 {
 				// alert
-				base.Mail.Set(strings.Join(*base.MailList, ";"), "host lost "+h.HostName+"  "+h.Sid, h.String()).Send()
+				base.Mail.Set(*base.MailList, "host lost "+h.HostName+"  "+h.Sid, h.String()).Send()
 				delete(base.HostData, h.Sid)
 			}
 		}
@@ -53,7 +52,9 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 	if base.HostData[h.Sid] == nil {
 		base.HostData[h.Sid] = make([]base.HostInfo, 0)
 		log.Println("find a new host")
-		base.Mail.Set(base.UserMail, "HostListen find "+h.HostName+"  "+h.Sid, h.String()).Send()
+		base.Mail.Set(*base.MailList, "HostListen find "+h.HostName+"  "+h.Sid, h.String()).Send()
+		// err := base.Mail.Set(*base.MailList, "HostListen find "+h.HostName+"  "+h.Sid, h.String()).Send()
+		// log.Println("mail err", err, strings.Join(*base.MailList, ","))
 	}
 	// 使用系统时间
 	h.Date = int(time.Now().Unix())
