@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"net/rpc"
+	"strings"
 	"time"
 )
 
@@ -33,7 +34,7 @@ func liten() {
 			t := int(time.Now().Unix()) - h.Date
 			if t > 60 {
 				// alert
-				base.Mail.Set(base.UserMail, "host lost "+h.HostName+"  "+h.Sid, h.String()).Send()
+				base.Mail.Set(strings.Join(*base.MailList, ";"), "host lost "+h.HostName+"  "+h.Sid, h.String()).Send()
 				delete(base.HostData, h.Sid)
 			}
 		}

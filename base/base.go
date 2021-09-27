@@ -48,13 +48,16 @@ var (
 	Is_server *bool
 	Is_user   *bool
 	Listen    *string
+	MailList  *[]string
 )
 
 func init() {
 	Is_server = flag.Bool("s", false, "server")
 	Is_user = flag.Bool("u", false, "getdata")
 	Listen = flag.String("l", ":12345", "listen addr")
-
+	MailList = &[]string{
+		"cjie9759@qq.com",
+		"1622762650@qq.com"}
 	flag.Parse()
 }
 
