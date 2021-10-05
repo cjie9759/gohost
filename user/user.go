@@ -6,13 +6,20 @@ import (
 	"hostListen/client"
 	"log"
 	"net/rpc"
+	"sort"
 	"time"
 )
 
 func showHostData() {
 	// fmt.Printf("\x1bc")
 	fmt.Printf("\x1b[2J")
-	for _, v := range base.HostData {
+	ks := make([]string, 0, len(base.HostData))
+	for k := range base.HostData {
+		ks = append(ks, k)
+	}
+	sort.Strings(ks)
+	for _, k := range ks {
+		v := base.HostData[k]
 		v1 := v[len(v)-1]
 		fmt.Println(v1.String())
 	}
