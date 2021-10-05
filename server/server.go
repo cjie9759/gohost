@@ -31,7 +31,7 @@ func liten() {
 			// last push time
 			h := v[len(v)-1]
 			t := int(time.Now().Unix()) - h.Date
-			if t > 60 {
+			if t > *base.LosTime {
 				// alert
 				base.Mail.Set(*base.MailList, "host lost "+h.HostName+"  "+h.Sid, h.String()).Send()
 				delete(base.HostData, h.Sid)
