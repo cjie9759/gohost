@@ -48,6 +48,6 @@ func User() {
 	}
 	for {
 		<-t.C
-		f()
+		go f()
 	}
 }
