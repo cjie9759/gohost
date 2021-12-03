@@ -41,7 +41,7 @@ func Client() {
 	f := func() {
 		conn, err := Con()
 		if err != nil {
-			log.Println(err)
+			log.Println("con err", err)
 			return
 		}
 		defer conn.Close()
@@ -51,7 +51,7 @@ func Client() {
 		result := ""
 		err = client.Call("Server.Save", getHostInfo(), &result)
 		if err != nil {
-			log.Println(err)
+			log.Println("call err ", err)
 			return
 		}
 		log.Println("server return", result)
