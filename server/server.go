@@ -33,7 +33,10 @@ func liten() {
 			t := int(time.Now().Unix()) - h.Date
 			if t > *base.LosTime {
 				// alert
-				base.Mail.Set(*base.MailList, "host lost "+h.HostName+"  "+h.Sid, h.String()).Send()
+				err := base.Mail.Set(*base.MailList, "host lost "+h.HostName+"  "+h.Sid, h.String()).Send()
+				if err != nil {
+					log.Println("err in send mail", err)
+				}
 				delete(base.HostData, h.Sid)
 			}
 		}
@@ -52,7 +55,10 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 	if base.HostData[h.Sid] == nil {
 		base.HostData[h.Sid] = make([]base.HostInfo, 0)
 		log.Println("find a new host")
-		base.Mail.Set(*base.MailList, "HostListen find "+h.HostName+"  "+h.Sid, h.String()).Send()
+		err := base.Mail.Set(*base.MailList, "HostListen find "+h.HostName+"  "+h.Sid, h.String()).Send()
+		if err != nil {
+			log.Println("err in send mail", err)
+		}
 		// err := base.Mail.Set(*base.MailList, "HostListen find "+h.HostName+"  "+h.Sid, h.String()).Send()
 		// log.Println("mail err", err, strings.Join(*base.MailList, ","))
 	}
