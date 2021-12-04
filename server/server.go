@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"hostListen/base"
+	"hostListen/cobug"
 	"log"
 	"net/http"
 	"net/rpc"
@@ -33,6 +34,7 @@ func liten() {
 			t := int(time.Now().Unix()) - h.Date
 			if t > *base.LosTime {
 				// alert
+				go cq.Send("host lost " + h.HostName)
 				err := base.Mail.Set(*base.MailList, "host lost "+h.HostName+"  "+h.Sid, h.String()).Send()
 				if err != nil {
 					log.Println("err in send mail", err)
@@ -55,6 +57,7 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 	if base.HostData[h.Sid] == nil {
 		base.HostData[h.Sid] = make([]base.HostInfo, 0)
 		log.Println("find a new host")
+		go cq.Send("host find " + h.HostName)
 		err := base.Mail.Set(*base.MailList, "HostListen find "+h.HostName+"  "+h.Sid, h.String()).Send()
 		if err != nil {
 			log.Println("err in send mail", err)
@@ -72,7 +75,11 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 	}
 	return nil
 }
+
+var cq *cobug.Cq
+
 func init() {
+	cq = cobug.NewCq("", 938132468)
 	// 开启监听，失联报警
 	go liten()
 }
