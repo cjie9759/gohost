@@ -38,24 +38,35 @@ func Con() (*tls.Conn, error) {
 func Client() {
 	t := time.NewTicker(time.Minute / 10)
 	defer t.Stop()
-	f := func() {
-		conn, err := Con()
-		if err != nil {
-			log.Println("con err", err)
+	var (
+		conn   *tls.Conn
+		err    error
+		client *rpc.Client
+	)
+	c := func() {
+		for {
+			conn, err = Con()
+			if err != nil {
+				log.Println("con err", err, "\n正在重新连接")
+				continue
+			}
+			log.Println("con success")
+			client = rpc.NewClient(conn)
 			return
 		}
-		defer conn.Close()
-		client := rpc.NewClient(conn)
-
-		//调用方法
+	}
+	f := func() {
 		result := ""
+		//调用方法
 		err = client.Call("Server.Save", getHostInfo(), &result)
 		if err != nil {
-			log.Println("call err ", err)
+			log.Println("call err ", err, "\n正在重新连接")
+			c()
 			return
 		}
 		log.Println("server return", result)
 	}
+	c()
 	for {
 		<-t.C
 		go f()
