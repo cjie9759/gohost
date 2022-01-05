@@ -29,7 +29,7 @@ func Con() (*tls.Conn, error) {
 		Certificates:       []tls.Certificate{cert},
 		RootCAs:            certPool,
 	}
-	conn, err := tls.Dial("tcp", *base.Listen, config)
+	conn, err := tls.Dial("tcp", base.Listen, config)
 	if err != nil {
 		return nil, err
 	}

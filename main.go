@@ -8,12 +8,12 @@ import (
 )
 
 func main() {
-	if *base.Is_server {
+	if base.Is_server {
 		server.TlsService()
 		return
 	}
 
-	if *base.Is_user {
+	if base.Is_user {
 		user.User()
 		return
 	}
