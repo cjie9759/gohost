@@ -53,11 +53,15 @@ var (
 )
 
 func init() {
-	Listen := Strs{":80"}
+	Is_server = false
+	Is_user = false
+	Listen = Strs{":80"}
+	LosTime = 0
+
 	flag.BoolVar(&Is_server, "s", false, "server")
 	flag.BoolVar(&Is_user, "u", false, "getdata")
 	flag.Var(&Listen, "l", "listen addr")
-	flag.DurationVar(&LosTime, "t", 60, "Lost Time for alert /s")
+	flag.DurationVar(&LosTime, "t", time.Minute, "Lost Time for alert")
 	MailList = []string{
 		"ckie@cjic.xyz",
 		"cc@cjic.xyz",
