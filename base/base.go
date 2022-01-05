@@ -58,9 +58,12 @@ func init() {
 	Listen = flag.String("l", ":12345", "listen addr")
 	LosTime = flag.Int("t", 60, "Lost Time for alert /s")
 	MailList = &[]string{
+		"ckie@cjic.xyz",
+		"cc@cjic.xyz",
 		"1622762650@qq.com",
 		// "cjie1704@qq.com",
-		"cjie9759@qq.com"}
+		"cjie9759@qq.com",
+	}
 	flag.Parse()
 }
 
