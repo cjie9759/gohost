@@ -32,10 +32,10 @@ func liten() {
 			// last push time
 			h := v[len(v)-1]
 			t := int(time.Now().Unix()) - h.Date
-			if t > *base.LosTime {
+			if t > int(base.LosTime.Nanoseconds()) {
 				// alert
 				go cq.Send("host lost " + h.HostName)
-				err := base.Mail.Set(*base.MailList, "host lost "+h.HostName+"  "+h.Sid, h.String()).Send()
+				err := base.Mail.Set(base.MailList, "host lost "+h.HostName+"  "+h.Sid, h.String()).Send()
 				if err != nil {
 					log.Println("err in send mail", err)
 				}
@@ -58,7 +58,7 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 		base.HostData[h.Sid] = make([]base.HostInfo, 0)
 		log.Println("find a new host")
 		go cq.Send("host find " + h.HostName)
-		err := base.Mail.Set(*base.MailList, "HostListen find "+h.HostName+"  "+h.Sid, h.String()).Send()
+		err := base.Mail.Set(base.MailList, "HostListen find "+h.HostName+"  "+h.Sid, h.String()).Send()
 		if err != nil {
 			log.Println("err in send mail", err)
 		}
@@ -97,8 +97,8 @@ func TlsService() {
 		ClientAuth:   tls.RequireAndVerifyClientCert,
 		ClientCAs:    certPool,
 	}
-	l, err := tls.Listen("tcp", *base.Listen, config)
-	fmt.Println("开始监听", *base.Listen)
+	l, err := tls.Listen("tcp", base.Listen, config)
+	fmt.Println("开始监听", base.Listen)
 	s.Accept(l)
 
 	if err != nil {
@@ -122,13 +122,13 @@ func Service() {
 	s := rpc.NewServer()
 	s.Register(new(Server))
 	hs := &http.Server{
-		Addr:           *base.Listen,
+		Addr:           base.Listen,
 		Handler:        s,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
-	fmt.Println("开始监听", *base.Listen)
+	fmt.Println("开始监听", base.Listen)
 	err := hs.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)

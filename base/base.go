@@ -45,19 +45,19 @@ var HostDataLock = new(sync.RWMutex)
 // var HostData = make(syncmap[string][]HostInfo)
 
 var (
-	Is_server *bool
-	Is_user   *bool
-	Listen    *string
-	MailList  *[]string
-	LosTime   *int
+	Is_server bool
+	Is_user   bool
+	Listen    string
+	MailList  []string
+	LosTime   time.Duration
 )
 
 func init() {
-	Is_server = flag.Bool("s", false, "server")
-	Is_user = flag.Bool("u", false, "getdata")
-	Listen = flag.String("l", ":12345", "listen addr")
-	LosTime = flag.Int("t", 60, "Lost Time for alert /s")
-	MailList = &[]string{
+	flag.BoolVar(&Is_server, "s", false, "server")
+	flag.BoolVar(&Is_user, "u", false, "getdata")
+	flag.StringVar(&Listen, "l", ":12345", "listen addr")
+	flag.DurationVar(&LosTime, "t", 60, "Lost Time for alert /s")
+	MailList = []string{
 		"ckie@cjic.xyz",
 		"cc@cjic.xyz",
 		"1622762650@qq.com",
