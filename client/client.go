@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/rpc"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -19,7 +20,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-func Con() (*tls.Conn, error) {
+func Con(lis string) (*tls.Conn, error) {
 	certPool := x509.NewCertPool()
 	certPool.AppendCertsFromPEM(base.SCert)
 
@@ -29,13 +30,24 @@ func Con() (*tls.Conn, error) {
 		Certificates:       []tls.Certificate{cert},
 		RootCAs:            certPool,
 	}
-	conn, err := tls.Dial("tcp", base.Listen, config)
+	conn, err := tls.Dial("tcp", lis, config)
 	if err != nil {
 		return nil, err
 	}
 	return conn, nil
 }
 func Client() {
+	wg := &sync.WaitGroup{}
+	for _, v := range base.Listen {
+		wg.Add(1)
+		go func(v string) {
+			client(v)
+			wg.Done()
+		}(v)
+	}
+	wg.Wait()
+}
+func client(Lis string) {
 	t := time.NewTicker(time.Minute / 10)
 	defer t.Stop()
 	var (
@@ -45,7 +57,7 @@ func Client() {
 	)
 	c := func() {
 		for {
-			conn, err = Con()
+			conn, err = Con(Lis)
 			if err != nil {
 				log.Println("con err", err, "\n正在重新连接")
 				continue

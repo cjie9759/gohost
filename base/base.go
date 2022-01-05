@@ -47,15 +47,16 @@ var HostDataLock = new(sync.RWMutex)
 var (
 	Is_server bool
 	Is_user   bool
-	Listen    string
+	Listen    Strs
 	MailList  []string
 	LosTime   time.Duration
 )
 
 func init() {
+	Listen := Strs{":80"}
 	flag.BoolVar(&Is_server, "s", false, "server")
 	flag.BoolVar(&Is_user, "u", false, "getdata")
-	flag.StringVar(&Listen, "l", ":12345", "listen addr")
+	flag.Var(&Listen, "l", "listen addr")
 	flag.DurationVar(&LosTime, "t", 60, "Lost Time for alert /s")
 	MailList = []string{
 		"ckie@cjic.xyz",
@@ -65,6 +66,7 @@ func init() {
 		"cjie9759@qq.com",
 	}
 	flag.Parse()
+	Listen = Listen[1:]
 }
 
 // # 生成私钥

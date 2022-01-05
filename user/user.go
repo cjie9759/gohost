@@ -28,7 +28,7 @@ func User() {
 	t := time.NewTicker(time.Minute / 10)
 	defer t.Stop()
 	f := func() {
-		conn, err := client.Con()
+		conn, err := client.Con(base.Listen[0])
 		if err != nil {
 			log.Println(err)
 			return

@@ -8,8 +8,8 @@ import (
 	"hostListen/base"
 	"hostListen/cobug"
 	"log"
-	"net/http"
 	"net/rpc"
+	"sync"
 	"time"
 )
 
@@ -97,13 +97,21 @@ func TlsService() {
 		ClientAuth:   tls.RequireAndVerifyClientCert,
 		ClientCAs:    certPool,
 	}
-	l, err := tls.Listen("tcp", base.Listen, config)
-	fmt.Println("开始监听", base.Listen)
-	s.Accept(l)
-
-	if err != nil {
-		log.Fatalln(err)
+	wg := &sync.WaitGroup{}
+	for _, v := range base.Listen {
+		wg.Add(1)
+		go func(v string) {
+			l, err := tls.Listen("tcp", v, config)
+			fmt.Println("开始监听", v)
+			s.Accept(l)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			wg.Done()
+		}(v)
 	}
+	wg.Wait()
+
 	// https
 	// hs := &http.Server{
 	// 	Addr:           *base.Listen,
@@ -117,20 +125,21 @@ func TlsService() {
 	// err := hs.ListenAndServeTLS("", "")
 
 }
-func Service() {
-	//注册服务
-	s := rpc.NewServer()
-	s.Register(new(Server))
-	hs := &http.Server{
-		Addr:           base.Listen,
-		Handler:        s,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-	}
-	fmt.Println("开始监听", base.Listen)
-	err := hs.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
-}
+
+// func Service() {
+// 	//注册服务
+// 	s := rpc.NewServer()
+// 	s.Register(new(Server))
+// 	hs := &http.Server{
+// 		Addr:           base.Listen,
+// 		Handler:        s,
+// 		ReadTimeout:    10 * time.Second,
+// 		WriteTimeout:   10 * time.Second,
+// 		MaxHeaderBytes: 1 << 20,
+// 	}
+// 	fmt.Println("开始监听", base.Listen)
+// 	err := hs.ListenAndServe()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// }
