@@ -48,7 +48,6 @@ var (
 	Is_server *bool
 	Is_user   *bool
 	Listen    *string
-	MailList  *[]string
 	LosTime   *int
 )
 
@@ -57,10 +56,6 @@ func init() {
 	Is_user = flag.Bool("u", false, "getdata")
 	Listen = flag.String("l", ":12345", "listen addr")
 	LosTime = flag.Int("t", 60, "Lost Time for alert /s")
-	MailList = &[]string{
-		"1622762650@qq.com",
-		// "cjie1704@qq.com",
-		"cjie9759@qq.com"}
 	flag.Parse()
 }
 
