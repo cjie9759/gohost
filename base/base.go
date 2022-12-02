@@ -45,18 +45,24 @@ var HostDataLock = new(sync.RWMutex)
 // var HostData = make(syncmap[string][]HostInfo)
 
 var (
-	Is_server *bool
-	Is_user   *bool
-	Listen    *string
-	LosTime   *int
+	Is_server bool
+	Is_user   bool
+	Listen    Strs
+	LosTime   time.Duration
 )
 
 func init() {
-	Is_server = flag.Bool("s", false, "server")
-	Is_user = flag.Bool("u", false, "getdata")
-	Listen = flag.String("l", ":12345", "listen addr")
-	LosTime = flag.Int("t", 60, "Lost Time for alert /s")
+	Is_server = false
+	Is_user = false
+	Listen = Strs{":80"}
+	LosTime = 0
+
+	flag.BoolVar(&Is_server, "s", false, "server")
+	flag.BoolVar(&Is_user, "u", false, "getdata")
+	flag.Var(&Listen, "l", "listen addr")
+	flag.DurationVar(&LosTime, "t", time.Minute, "Lost Time for alert")
 	flag.Parse()
+	Listen = Listen[1:]
 }
 
 // # 生成私钥
