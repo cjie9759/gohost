@@ -20,6 +20,7 @@ type mail struct {
 var Mail *mail
 
 func Init(User string, Pwd string, From string) {
+	Mail = &mail{}
 	Mail.User = User
 	Mail.Pwd = Pwd
 	Mail.From = From
