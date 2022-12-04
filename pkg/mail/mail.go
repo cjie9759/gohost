@@ -27,12 +27,11 @@ func Init(User string, Pwd string, From string) {
 
 }
 
-func (M *mail) Send(To []string, Sub string, Body string) *mail {
+func (M *mail) Send(To []string, Sub string, Body string) error {
 	M.To = To
 	M.Sub = Sub
 	M.Body = Body
-	M.send()
-	return M
+	return M.send()
 }
 func (M *mail) send() error {
 	host := "smtp.exmail.qq.com"
