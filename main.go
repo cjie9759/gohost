@@ -8,7 +8,9 @@ import (
 )
 
 func main() {
+	base.Init()
 	if base.Is_server {
+		server.Init()
 		server.TlsService()
 		return
 	}
