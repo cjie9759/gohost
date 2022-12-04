@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"hostListen/base"
 	"hostListen/pkg/cq"
+	"hostListen/pkg/mail"
 	"log"
 	"net/rpc"
 	"sync"
@@ -35,7 +36,7 @@ func liten() {
 			if t > int(base.LosTime.Nanoseconds()) {
 				// alert
 				go cq.Cq.Send("host lost " + h.HostName)
-				err := cq.Cq.Send(fmt.Sprintln("host lost ", h.HostName, "  ", h.Sid, "\n", h.String()))
+				err := mail.Mail.Send(base.MAIL_TO, "host lost "+h.HostName+"  "+h.Sid, h.String())
 				if err != nil {
 					log.Println("err in send mail", err)
 				}
@@ -58,10 +59,9 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 		base.HostData[h.Sid] = make([]base.HostInfo, 0)
 		log.Println("find a new host")
 		go cq.Cq.Send("host find " + h.HostName)
-		// err := base.Mail.Set(*base.MailList, "HostListen find "+h.HostName+"  "+h.Sid, h.String()).Send()
-		err := cq.Cq.Send(fmt.Sprintln("HostListen find ", h.HostName, "  ", h.Sid, "\n", h.String()))
+		err := mail.Mail.Send(base.MAIL_TO, "host lost "+h.HostName+"  "+h.Sid, h.String())
 		if err != nil {
-			log.Println("err in send cq", err)
+			log.Println("err in send mail", err)
 		}
 	}
 	// 使用系统时间
@@ -77,6 +77,7 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 
 func Init() {
 	cq.Init(base.CQ_URL, base.CQ_GROUP_ID, false)
+	mail.Init(base.MAIL_USER, base.MAIL_PWD, base.MAIL_FROM)
 
 	// 开启监听，失联报警
 	go liten()
