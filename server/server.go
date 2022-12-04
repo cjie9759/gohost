@@ -75,7 +75,7 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 	return nil
 }
 
-func init() {
+func Init() {
 	cq.Init(base.CQ_URL, base.CQ_GROUP_ID, false)
 
 	// 开启监听，失联报警

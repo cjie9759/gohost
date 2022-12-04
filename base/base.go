@@ -51,7 +51,7 @@ var (
 	LosTime   time.Duration
 )
 
-func init() {
+func Init() {
 	Is_server = false
 	Is_user = false
 	Listen = Strs{":80"}
