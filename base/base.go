@@ -7,6 +7,11 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/cjie9759/notify"
+	"github.com/cjie9759/notify/cqrobot"
+	"github.com/cjie9759/notify/mail"
+	"github.com/cjie9759/notify/wxrobot"
 )
 
 type HostInfo struct {
@@ -49,6 +54,7 @@ var (
 	Is_user   bool
 	Listen    Strs
 	LosTime   time.Duration
+	Notifys   *notify.NotifyGrop
 )
 
 func Init() {
@@ -63,6 +69,12 @@ func Init() {
 	flag.DurationVar(&LosTime, "t", time.Minute, "Lost Time for alert")
 	flag.Parse()
 	Listen = Listen[1:]
+
+	Notifys = notify.NewNotifyGrop([]notify.Notify{
+		wxrobot.NewNotify(wxrobot.Msgtype_text, webhook),
+		mail.NewMail(mail.Cfg{User: MAIL_USER, Pwd: MAIL_PWD, From: MAIL_FROM, To: []string{MAIL_TEST_TO}, Sub: "ckie onen mail test"}),
+		cqrobot.NewNotify(CQ_GROUP_ID, CQ_URL),
+	})
 }
 
 // # 生成私钥
