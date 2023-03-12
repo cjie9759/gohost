@@ -72,7 +72,7 @@ func Init() {
 
 	Notifys = notify.NewNotifyGrop([]notify.Notify{
 		wxrobot.NewNotify(wxrobot.Msgtype_text, webhook),
-		mail.NewMail(mail.Cfg{User: MAIL_USER, Pwd: MAIL_PWD, From: MAIL_FROM, To: []string{MAIL_TEST_TO}, Sub: "ckie onen mail test"}),
+		mail.NewMail(mail.Cfg{User: MAIL_USER, Pwd: MAIL_PWD, From: MAIL_FROM, To: []string{MAIL_TEST_TO}, Sub: "gohost"}),
 		cqrobot.NewNotify(CQ_GROUP_ID, CQ_URL),
 	})
 }
