@@ -6,8 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"hostListen/base"
-	"hostListen/pkg/cq"
-	"hostListen/pkg/mail"
 	"log"
 	"net/rpc"
 	"sync"
@@ -35,11 +33,7 @@ func liten() {
 			t := int(time.Now().Unix()) - h.Date
 			if t > int(base.LosTime.Nanoseconds()) {
 				// alert
-				go cq.Cq.Send("host lost " + h.HostName)
-				err := mail.Mail.Send(base.MAIL_TO, "host lost "+h.HostName+"  "+h.Sid, h.String())
-				if err != nil {
-					log.Println("err in send mail", err)
-				}
+				go base.Notifys.Send("host lost " + h.HostName + "  " + h.Sid + h.String())
 				delete(base.HostData, h.Sid)
 			}
 		}
@@ -58,11 +52,8 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 	if base.HostData[h.Sid] == nil {
 		base.HostData[h.Sid] = make([]base.HostInfo, 0)
 		log.Println("find a new host")
-		go cq.Cq.Send("host find " + h.HostName)
-		err := mail.Mail.Send(base.MAIL_TO, "host lost "+h.HostName+"  "+h.Sid, h.String())
-		if err != nil {
-			log.Println("err in send mail", err)
-		}
+		go base.Notifys.Send("host find " + h.HostName + "  " + h.Sid + h.String())
+
 	}
 	// 使用系统时间
 	h.Date = int(time.Now().Unix())
@@ -76,9 +67,6 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 }
 
 func Init() {
-	cq.Init(base.CQ_URL, base.CQ_GROUP_ID, false)
-	mail.Init(base.MAIL_USER, base.MAIL_PWD, base.MAIL_FROM)
-
 	// 开启监听，失联报警
 	go liten()
 }
