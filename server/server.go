@@ -31,7 +31,8 @@ func liten() {
 			// last push time
 			h := v[len(v)-1]
 			t := int(time.Now().Unix()) - h.Date
-			if t > int(base.LosTime.Nanoseconds()) {
+			// fmt.Println(t, int(base.LosTime.Seconds()), h.Date)
+			if t > int(base.LosTime.Seconds()) {
 				// alert
 				go base.Notifys.Send("host lost " + h.HostName + "  " + h.Sid + h.String())
 				delete(base.HostData, h.Sid)
