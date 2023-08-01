@@ -53,6 +53,7 @@ var (
 	Is_server bool
 	Is_user   bool
 	Listen    Strs
+	Name      string
 	LosTime   time.Duration
 	Notifys   *notify.NotifyGrop
 )
@@ -65,6 +66,7 @@ func Init() {
 
 	flag.BoolVar(&Is_server, "s", false, "server")
 	flag.BoolVar(&Is_user, "u", false, "getdata")
+	flag.StringVar(&Name, "n", "", "node name")
 	flag.Var(&Listen, "l", "listen addr")
 	flag.DurationVar(&LosTime, "t", time.Minute, "Lost Time for alert")
 	flag.Parse()

@@ -5,8 +5,4 @@ FROM alpine
 WORKDIR /app
 
 COPY hostListen /app/hostListen
-RUN apk add --no-cache openssh-client
-
-EXPOSE 80
-
-ENTRYPOINT ["./hostListen -l cjie.cf:17126"]
+ENTRYPOINT ["/app/hostListen","-l","cjie.cf:17126"]

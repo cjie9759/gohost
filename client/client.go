@@ -37,6 +37,9 @@ func Con(lis string) (*tls.Conn, error) {
 	return conn, nil
 }
 func Client() {
+	if base.Name != "" {
+		base.Name = base.Name + "----"
+	}
 	wg := &sync.WaitGroup{}
 	for _, v := range base.Listen {
 		wg.Add(1)
@@ -99,7 +102,7 @@ func getHostInfo() *base.HostInfo {
 		meminfo.Used/1024/1024, "M/", meminfo.UsedPercent)
 
 	hostinfo, _ := host.Info()
-	hostname := hostinfo.Hostname
+	hostname := base.Name + hostinfo.Hostname
 
 	// netinfo := net.Addr.String()
 	conn, _ := net.Dial("udp", "baidu.com:80")
