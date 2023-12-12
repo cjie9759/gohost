@@ -10,7 +10,7 @@ import (
 func main() {
 	base.Init()
 	if base.Is_server {
-		server.Init()
+		go server.Listen()
 		server.TlsService()
 		return
 	}

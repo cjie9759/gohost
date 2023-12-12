@@ -10,18 +10,14 @@ import (
 	"time"
 )
 
-func showHostData() {
+func showHostData(hs []base.HostInfo) {
 	// fmt.Printf("\x1bc")
 	fmt.Printf("\x1b[2J")
-	ks := make([]string, 0, len(base.HostData))
-	for k := range base.HostData {
-		ks = append(ks, k)
-	}
-	sort.Strings(ks)
-	for _, k := range ks {
-		v := base.HostData[k]
-		v1 := v[len(v)-1]
-		fmt.Println(v1.String())
+	sort.Slice(hs, func(i, j int) bool {
+		return hs[i].Sid > hs[j].Sid
+	})
+	for _, k := range hs {
+		fmt.Println(k.String())
 	}
 }
 func User() {
@@ -37,9 +33,9 @@ func User() {
 		client := rpc.NewClient(conn)
 
 		//调用方法
-		result := base.HostData
-		err = client.Call("Server.GetData", 1, &result)
-		showHostData()
+		hs := []base.HostInfo{}
+		err = client.Call("Server.GetData", 1, &hs)
+		showHostData(hs)
 		if err != nil {
 			log.Println(err)
 			return

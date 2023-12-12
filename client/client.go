@@ -62,6 +62,7 @@ func client(Lis string) {
 		for {
 			conn, err = Con(Lis)
 			if err != nil {
+				<-t.C
 				log.Println("con err", err, "\n正在重新连接")
 				continue
 			}
@@ -75,7 +76,6 @@ func client(Lis string) {
 		//调用方法
 		err = client.Call("Server.Save", getHostInfo(), &result)
 		if err != nil {
-			log.Println("call err ", err, "\n正在重新连接")
 			c()
 			return
 		}
