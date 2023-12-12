@@ -12,33 +12,14 @@ import (
 	"time"
 )
 
+var sm = &sync.Map{}
+
 type Server struct {
 }
 
-func (l *Server) GetData(h int, result *map[string][]base.HostInfo) error {
-	*result = base.HostData
+func (l *Server) GetData(h int, result *[]base.HostInfo) error {
+	*result = make([]base.HostInfo, 10)
 	return nil
-}
-func liten() {
-	t := time.NewTicker(time.Minute)
-	for ; ; base.HostDataLock.Unlock() {
-		<-t.C
-		base.HostDataLock.Lock()
-		if len(base.HostData) == 0 {
-			continue
-		}
-		for _, v := range base.HostData {
-			// last push time
-			h := v[len(v)-1]
-			t := int(time.Now().Unix()) - h.Date
-			// fmt.Println(t, int(base.LosTime.Seconds()), h.Date)
-			if t > int(base.LosTime.Seconds()) {
-				// alert
-				go base.Notifys.Send("host lost " + h.HostName + "  " + h.Sid + h.String())
-				delete(base.HostData, h.Sid)
-			}
-		}
-	}
 }
 func (l *Server) Save(h *base.HostInfo, result *string) error {
 	*result = "I see"
@@ -47,31 +28,37 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 		return errors.New("sid is null")
 	}
 
-	base.HostDataLock.Lock()
-	defer base.HostDataLock.Unlock()
 	// find new host
-	if base.HostData[h.Sid] == nil {
-		base.HostData[h.Sid] = make([]base.HostInfo, 0)
+	_, ok := sm.Load(h.Sid)
+	if !ok {
 		log.Println("find a new host")
 		go base.Notifys.Send("host find " + h.HostName + "  " + h.Sid + h.String())
-
 	}
+
 	// 使用系统时间
 	h.Date = int(time.Now().Unix())
-	base.HostData[h.Sid] = append(base.HostData[h.Sid], *h)
-	if len(base.HostData[h.Sid]) > 90 {
-		*result = "is much "
-		base.HostData[h.Sid] = base.HostData[h.Sid][80:]
-		// 转储
+	sm.Store(h.Sid, h)
+
+	return base.DB.Save(h).Error
+}
+func Listen() {
+	t := time.NewTicker(time.Minute)
+	for {
+		<-t.C
+
+		sm.Range(func(key, value any) bool {
+			h := value.(*base.HostInfo)
+			t := int(time.Now().Unix()) - h.Date
+			// fmt.Println(t, int(base.LosTime.Seconds()), h.Date)
+			if t > int(base.LosTime.Seconds()) {
+				// alert
+				go base.Notifys.Send("host lost " + h.HostName + "  " + h.Sid + h.String())
+				sm.Delete(key)
+			}
+			return true
+		})
 	}
-	return nil
 }
-
-func Init() {
-	// 开启监听，失联报警
-	go liten()
-}
-
 func TlsService() {
 	//注册服务
 	s := rpc.NewServer()
