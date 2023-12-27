@@ -1,0 +1,192 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "fdf854ff-d7a2-4a4c-ae01-c50fbd24f92f"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "c4d5f413-06e9-4cd2-aee9-b3d90c7a4069"
+          },
+          "queryText": "SELECT $__unixEpochGroupSeconds(date, 30, null)  as time,host_name,1 as up\nfrom host_infos \nWHERE date BETWEEN ${__from:date:seconds} AND ${__to:date:seconds}\n-- WHERE date >= 1702364444312 / 1000 and date < 1702386044312 / 1000 \n-- WHERE date BETWEEN '2023-12-12T07:00:44.312Z' AND '2023-12-12T13:00:44.312Z'\n-- order by time asc \nGROUP BY 1,2\nORDER BY 1,2 ASC\n-- limit 1000;",
+          "queryType": "time series",
+          "rawQueryText": "SELECT $__unixEpochGroupSeconds(date, 30, null)  as time,host_name,1 as up\nfrom host_infos \nWHERE date BETWEEN ${__from:date:seconds} AND ${__to:date:seconds}\n-- WHERE date >= 1702364444312 / 1000 and date < 1702386044312 / 1000 \n-- WHERE date BETWEEN '2023-12-12T07:00:44.312Z' AND '2023-12-12T13:00:44.312Z'\n-- order by time asc \nGROUP BY 1,2\nORDER BY 1,2 ASC\n-- limit 1000;",
+          "refId": "A",
+          "timeColumns": [
+            "time"
+          ]
+        }
+      ],
+      "title": "hsot up",
+      "transformations": [],
+      "transparent": true,
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "fdf854ff-d7a2-4a4c-ae01-c50fbd24f92f"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "fdf854ff-d7a2-4a4c-ae01-c50fbd24f92f"
+          },
+          "queryText": "SELECT DISTINCT sid,host_name,sys_info,ip,sip,mem,cpu,disk,date \nfrom host_infos \nWHERE date BETWEEN ${__from:date:seconds} AND ${__to:date:seconds} \nGROUP by sid order by date desc ",
+          "queryType": "table",
+          "rawQueryText": "SELECT DISTINCT sid,host_name,sys_info,ip,sip,mem,cpu,disk,date \nfrom host_infos \nWHERE date BETWEEN ${__from:date:seconds} AND ${__to:date:seconds} \nGROUP by sid order by date desc ",
+          "refId": "A",
+          "timeColumns": []
+        }
+      ],
+      "title": "host info",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "New dashboard",
+  "uid": "b40507fb-bd6c-4685-813b-450fe5b927bc",
+  "version": 6,
+  "weekStart": ""
+}

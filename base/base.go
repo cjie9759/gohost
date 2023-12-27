@@ -14,6 +14,10 @@ import (
 	"github.com/cjie9759/notify/cqrobot"
 	"github.com/cjie9759/notify/mail"
 	"github.com/cjie9759/notify/wxrobot"
+	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/disk"
+	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/mem"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -114,10 +118,18 @@ type HostInfo struct {
 	SysInfo  string
 	Ip       string
 	Sip      string
-	Mem      string
-	Cpu      string
-	Disk     string
+	Mem      *mem.VirtualMemoryStat
+	Host     *host.InfoStat
+	Cpu      CPUinfo
+	Disk     *disk.UsageStat
 	Date     int
+	Time     time.Time
+	LTime    time.Time
+}
+type CPUinfo struct {
+	Count   int
+	Percent []float64
+	Info    []cpu.InfoStat
 }
 
 func (t *HostInfo) Bytes() []byte {

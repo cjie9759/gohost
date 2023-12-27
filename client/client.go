@@ -92,36 +92,37 @@ func getHostInfo() *base.HostInfo {
 	cc, _ := cpu.Counts(false)
 	ct, _ := cpu.Percent(time.Microsecond*3, false)
 	cn, _ := cpu.Info()
-	c := fmt.Sprint(cc, ct, cn[0].ModelName)
 
-	d1, _ := disk.Usage("./")
-	d := fmt.Sprint(d1.Used/1024/1024/1024, "G/", d1.Total/1024/1024/1024, "G/", d1.UsedPercent)
+	d, _ := disk.Usage("./")
 
 	meminfo, _ := mem.VirtualMemory()
-	m := fmt.Sprint(meminfo.Total/1024/1024, "M/",
-		meminfo.Used/1024/1024, "M/", meminfo.UsedPercent)
 
 	hostinfo, _ := host.Info()
 	hostname := base.Name + hostinfo.Hostname
 
 	// netinfo := net.Addr.String()
-	conn, _ := net.Dial("udp", "baidu.com:80")
+	conn, _ := net.Dial("udp", "jd.com:80")
 	defer conn.Close()
 	ip := strings.Split(conn.LocalAddr().String(), ":")[0]
 
-	sid1 := md5.Sum([]byte(
+	sid := md5.Sum([]byte(
 		fmt.Sprint(hostname, ip, "cj", cn[0].ModelName)))
-	// sid := make([]byte, 16)
 
 	data := &base.HostInfo{
-		Sid:      hex.EncodeToString(sid1[:]),
+		Sid:      hex.EncodeToString(sid[:]),
 		HostName: hostname,
 		SysInfo:  fmt.Sprint(hostinfo.OS, "/", hostinfo.PlatformVersion),
 		Ip:       ip,
-		Mem:      m,
-		Cpu:      c,
-		Disk:     d,
-		Date:     int(time.Now().Unix()),
+		Mem:      meminfo,
+		Host:     hostinfo,
+		Cpu: base.CPUinfo{
+			Count:   cc,
+			Percent: ct,
+			Info:    cn},
+		Disk:  d,
+		Date:  int(time.Now().Unix()),
+		Time:  time.Now(),
+		LTime: time.Now(),
 	}
 	return data
 }
