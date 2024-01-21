@@ -2,16 +2,6 @@ module hostListen
 
 go 1.21.1
 
-// go 1.16
-
-// require (
-// 	github.com/StackExchange/wmi v1.2.1 // indirect
-// 	github.com/cjie9759/notify v0.0.0-20230312032251-2b0161067196
-// 	github.com/shirou/gopsutil v3.21.8+incompatible
-// 	github.com/stretchr/testify v1.8.1 // indirect
-// 	github.com/tklauser/go-sysconf v0.3.9 // indirect
-// )
-
 require (
 	github.com/cjie9759/notify v0.0.0-20231001093751-c6f38acd573a
 	github.com/shirou/gopsutil v3.21.11+incompatible
@@ -39,14 +29,14 @@ require (
 	github.com/quic-go/qtls-go1-20 v0.3.3 // indirect
 	github.com/quic-go/quic-go v0.38.1 // indirect
 	github.com/refraction-networking/utls v1.5.3 // indirect
-	github.com/tklauser/go-sysconf v0.3.12 // indirect
-	github.com/tklauser/numcpus v0.6.1 // indirect
+	github.com/tklauser/go-sysconf v0.3.13 // indirect
+	github.com/tklauser/numcpus v0.7.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/exp v0.0.0-20230817173708-d852ddb80c63 // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/net v0.14.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/tools v0.12.1-0.20230815132531-74c255bcf846 // indirect
 )

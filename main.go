@@ -9,19 +9,18 @@ import (
 
 func main() {
 	base.Init()
-	if base.Is_server {
+
+	switch {
+	case base.Is_server:
 		go server.Listen()
 		server.TlsService()
-		return
-	}
-
-	if base.Is_user {
+	case base.Is_user:
 		user.User()
-		return
+	default:
+		client.Client()
 	}
 
 	// 客户端
-	client.Client()
 	// <-t.C
 	// t := time.NewTicker(time.Minute / 10)
 	// defer t.Stop()

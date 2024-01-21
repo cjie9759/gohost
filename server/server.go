@@ -32,7 +32,7 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 	_, ok := sm.Load(h.Sid)
 	if !ok {
 		log.Println("find a new host")
-		go base.Notifys.Send("host find " + h.HostName + "  " + h.Sid + h.String())
+		base.Notifys.Send("host find " + h.HostName + "  " + h.Sid + h.String())
 	}
 
 	// 使用系统时间
@@ -52,7 +52,7 @@ func Listen() {
 			// fmt.Println(t, int(base.LosTime.Seconds()), h.Date)
 			if t > int(base.LosTime.Seconds()) {
 				// alert
-				go base.Notifys.Send("host lost " + h.HostName + "  " + h.Sid + h.String())
+				base.Notifys.Send("host lost " + h.HostName + "  " + h.Sid + h.String())
 				sm.Delete(key)
 			}
 			return true
