@@ -76,6 +76,7 @@ func client(Lis string) {
 		//调用方法
 		err = client.Call("Server.Save", getHostInfo(), &result)
 		if err != nil {
+			log.Println(err)
 			c()
 			return
 		}
@@ -90,7 +91,7 @@ func client(Lis string) {
 
 func getHostInfo() *base.HostInfo {
 	cc, _ := cpu.Counts(false)
-	ct, _ := cpu.Percent(time.Microsecond*3, false)
+	ct, _ := cpu.Percent(time.Microsecond*100, false)
 	cn, _ := cpu.Info()
 
 	d, _ := disk.Usage("./")
