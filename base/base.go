@@ -39,6 +39,7 @@ var (
 
 	Notifys *notify.NotifyGrop
 	DB      *gorm.DB
+	Uptime  time.Time
 )
 
 func Init() {
@@ -46,7 +47,7 @@ func Init() {
 		Is_server = false
 		Is_user = false
 		Listen = Strs{":80"}
-		LosTime = 0
+		LosTime = 120
 
 		flag.BoolVar(&Is_server, "s", false, "server")
 		flag.BoolVar(&Is_user, "u", false, "getdata")
@@ -57,6 +58,8 @@ func Init() {
 		Listen = Listen[1:]
 	}
 	if Is_server {
+		Uptime = time.Now()
+
 		Notifys = notify.NewNotifyGrop([]notify.Notify{
 			wxrobot.NewNotify(wxrobot.Msgtype_text, webhook),
 			mail.NewMail(mail.Cfg{User: MAIL_USER, Pwd: MAIL_PWD, From: MAIL_FROM, To: []string{MAIL_TEST_TO}, Sub: "gohost"}),
@@ -123,7 +126,7 @@ type HostInfo struct {
 	Host     *host.InfoStat         `gorm:"type:josnb;serializer:json"`
 	Cpu      CPUinfo                `gorm:"type:josnb;serializer:json"`
 	Disk     *disk.UsageStat        `gorm:"type:josnb;serializer:json"`
-	Date     int
+	Date     int                    `gorm:"index"`
 	Time     time.Time
 	LTime    time.Time
 }
