@@ -30,7 +30,7 @@ func (l *Server) Save(h *base.HostInfo, result *string) error {
 
 	// find new host
 	_, ok := sm.Load(h.Sid)
-	if !ok {
+	if !ok && time.Since(base.Uptime) > time.Minute {
 		log.Println("find a new host")
 		base.Notifys.Send("host find " + h.HostName + "  " + h.Sid + h.String())
 	}

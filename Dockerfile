@@ -5,4 +5,4 @@ FROM docker.io/alpine
 WORKDIR /app
 
 COPY hostListen /app/hostListen
-ENTRYPOINT ["/app/hostListen","-l","cjie.cf:17126"]
+ENTRYPOINT ["/app/hostListen"]
