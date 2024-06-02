@@ -10,3 +10,9 @@ Usage of ./goHostSata:
   -u    getdata
 
 ~~~
+
+## featureList
+### V2
+* 连接方式支持 tcp/udp/quic
+* 替换提取主机参数方式
+* 报警消息分级
