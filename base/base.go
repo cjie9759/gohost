@@ -1,26 +1,13 @@
 package base
 
 import (
-	"bytes"
 	_ "embed"
 	"flag"
-	"fmt"
-	"log"
-	"os"
 	"sync"
 	"time"
 
 	"github.com/cjie9759/notify"
-	"github.com/cjie9759/notify/cqrobot"
-	"github.com/cjie9759/notify/mail"
-	"github.com/cjie9759/notify/wxrobot"
-	"github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/disk"
-	"github.com/shirou/gopsutil/host"
-	"github.com/shirou/gopsutil/mem"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 var HostData *sync.Map
@@ -60,31 +47,31 @@ func Init() {
 	if Is_server {
 		Uptime = time.Now()
 
-		Notifys = notify.NewNotifyGrop([]notify.Notify{
-			wxrobot.NewNotify(wxrobot.Msgtype_text, webhook),
-			mail.NewMail(mail.Cfg{User: MAIL_USER, Pwd: MAIL_PWD, From: MAIL_FROM, To: []string{MAIL_TEST_TO}, Sub: "gohost"}),
-			cqrobot.NewNotify(CQ_GROUP_ID, CQ_URL),
-		})
+		// Notifys = notify.NewNotifyGrop([]notify.Notify{
+		// 	wxrobot.NewNotify(wxrobot.Msgtype_text, webhook),
+		// 	mail.NewMail(mail.Cfg{User: MAIL_USER, Pwd: MAIL_PWD, From: MAIL_FROM, To: []string{MAIL_TEST_TO}, Sub: "gohost"}),
+		// 	cqrobot.NewNotify(CQ_GROUP_ID, CQ_URL),
+		// })
 
-		var err error
-		DB, err = gorm.Open(sqlite.Open(dbdsn), &gorm.Config{
-			Logger: logger.New(
-				log.New(os.Stdout, "\r\n", log.LstdFlags),
-				logger.Config{
-					SlowThreshold:             time.Second / 5, // Slow SQL threshold
-					LogLevel:                  logger.Info,     // Log level
-					IgnoreRecordNotFoundError: false,           // Ignore ErrRecordNotFound error for logger
-					// ParameterizedQueries:      true,          // Don't include params in the SQL log
-					Colorful: true, // Disable color
-				})})
-		if err != nil {
-			log.Panic("db connect fail:", err)
-		}
+		// var err error
+		// DB, err = gorm.Open(sqlite.Open(dbdsn), &gorm.Config{
+		// 	Logger: logger.New(
+		// 		log.New(os.Stdout, "\r\n", log.LstdFlags),
+		// 		logger.Config{
+		// 			SlowThreshold:             time.Second / 5, // Slow SQL threshold
+		// 			LogLevel:                  logger.Info,     // Log level
+		// 			IgnoreRecordNotFoundError: false,           // Ignore ErrRecordNotFound error for logger
+		// 			// ParameterizedQueries:      true,          // Don't include params in the SQL log
+		// 			Colorful: true, // Disable color
+		// 		})})
+		// if err != nil {
+		// 	log.Panic("db connect fail:", err)
+		// }
 
-		err = DB.AutoMigrate(&HostInfo{})
-		if err != nil {
-			log.Panic("db connect fail:", err)
-		}
+		// err = DB.AutoMigrate(&HostInfo{})
+		// if err != nil {
+		// 	log.Panic("db connect fail:", err)
+		// }
 	}
 }
 
@@ -103,52 +90,14 @@ func Init() {
 // //go:embed pem/privkey.pem
 // var Key []byte
 
-//go:embed pem/client.crt
+// / go:embed pem/client.crt
 var CCert []byte
 
-//go:embed pem/client.key
+// /go:embed pem/client.key
 var CKey []byte
 
-//go:embed pem/server.crt
+// /go:embed pem/server.crt
 var SCert []byte
 
-//go:embed pem/server.key
+// /go:embed pem/server.key
 var SKey []byte
-
-type HostInfo struct {
-	gorm.Model
-	Sid      string
-	HostName string
-	SysInfo  string
-	Ip       string
-	Sip      string
-	Mem      *mem.VirtualMemoryStat `gorm:"type:josnb;serializer:json"`
-	Host     *host.InfoStat         `gorm:"type:josnb;serializer:json"`
-	Cpu      CPUinfo                `gorm:"type:josnb;serializer:json"`
-	Disk     *disk.UsageStat        `gorm:"type:josnb;serializer:json"`
-	Date     int                    `gorm:"index"`
-	Time     time.Time
-	LTime    time.Time
-}
-type CPUinfo struct {
-	Count   int
-	Percent []float64
-	Info    []cpu.InfoStat
-}
-
-func (t *HostInfo) Bytes() []byte {
-	a := bytes.NewBuffer(nil)
-	fmt.Fprintln(a, "Sid", t.Sid)
-	fmt.Fprintln(a, "HostName", t.HostName)
-	// fmt.Fprintln(a, "SysInfo", t.SysInfo)
-	fmt.Fprintln(a, "Ip", t.Ip)
-	// fmt.Fprintln(a, "Mem", t.Mem)
-	// fmt.Fprintln(a, "Cpu", t.Cpu)
-	// fmt.Fprintln(a, "Disk", t.Disk)
-	d := time.Unix(int64(t.Date), 0).Local().Format("01/02 15:04:05")
-	fmt.Fprintln(a, "Date", d)
-	return a.Bytes()
-}
-func (t *HostInfo) String() string {
-	return string(t.Bytes())
-}

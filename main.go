@@ -1,10 +1,10 @@
 package main
 
 import (
-	"hostListen/base"
-	"hostListen/client"
-	"hostListen/server"
-	"hostListen/user"
+	"gohost/base"
+	"gohost/client"
+	"gohost/server"
+	"gohost/user"
 )
 
 func main() {
@@ -12,7 +12,6 @@ func main() {
 
 	switch {
 	case base.Is_server:
-		go server.Listen()
 		server.TlsService()
 	case base.Is_user:
 		user.User()

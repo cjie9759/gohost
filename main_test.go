@@ -1,9 +1,9 @@
 package main
 
 import (
-	"hostListen/base"
-	"hostListen/client"
-	"hostListen/server"
+	"gohost/base"
+	"gohost/client"
+	"gohost/server"
 	"testing"
 )
 
@@ -13,7 +13,6 @@ func init() {
 }
 func Test(t *testing.T) {
 	base.Listen = []string{"127.0.0.1:12398"}
-	go server.Listen()
 	server.TlsService()
 }
 

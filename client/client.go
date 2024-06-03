@@ -1,23 +1,14 @@
 package client
 
 import (
-	"crypto/md5"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/hex"
-	"fmt"
-	"hostListen/base"
+	"gohost/base"
+	hostinfo "gohost/hostInfo"
 	"log"
-	"net"
 	"net/rpc"
-	"strings"
 	"sync"
 	"time"
-
-	"github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/disk"
-	"github.com/shirou/gopsutil/host"
-	"github.com/shirou/gopsutil/mem"
 )
 
 func Con(lis string) (*tls.Conn, error) {
@@ -74,7 +65,7 @@ func client(Lis string) {
 	f := func() {
 		result := ""
 		//调用方法
-		err = client.Call("Server.Save", getHostInfo(), &result)
+		err = client.Call("Server.Save", hostinfo.GetHostInfo(), &result)
 		if err != nil {
 			log.Println(err)
 			c()
@@ -87,43 +78,4 @@ func client(Lis string) {
 		<-t.C
 		go f()
 	}
-}
-
-func getHostInfo() *base.HostInfo {
-	cc, _ := cpu.Counts(false)
-	ct, _ := cpu.Percent(time.Microsecond*100, false)
-	cn, _ := cpu.Info()
-
-	d, _ := disk.Usage("./")
-
-	meminfo, _ := mem.VirtualMemory()
-
-	hostinfo, _ := host.Info()
-	hostname := base.Name + hostinfo.Hostname
-
-	// netinfo := net.Addr.String()
-	conn, _ := net.Dial("udp", "jd.com:80")
-	defer conn.Close()
-	ip := strings.Split(conn.LocalAddr().String(), ":")[0]
-
-	sid := md5.Sum([]byte(
-		fmt.Sprint(hostname, ip, "cj", cn[0].ModelName)))
-
-	data := &base.HostInfo{
-		Sid:      hex.EncodeToString(sid[:]),
-		HostName: hostname,
-		SysInfo:  fmt.Sprint(hostinfo.OS, "/", hostinfo.PlatformVersion),
-		Ip:       ip,
-		Mem:      meminfo,
-		Host:     hostinfo,
-		Cpu: base.CPUinfo{
-			Count:   cc,
-			Percent: ct,
-			Info:    cn},
-		Disk:  d,
-		Date:  int(time.Now().Unix()),
-		Time:  time.Now(),
-		LTime: time.Now(),
-	}
-	return data
 }

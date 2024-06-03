@@ -4,3 +4,4 @@ launch.json
 *.crt
 *.key
 hostListen
+.ssh

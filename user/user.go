@@ -2,15 +2,16 @@ package user
 
 import (
 	"fmt"
-	"hostListen/base"
-	"hostListen/client"
+	"gohost/base"
+	"gohost/client"
+	hostinfo "gohost/hostInfo"
 	"log"
 	"net/rpc"
 	"sort"
 	"time"
 )
 
-func showHostData(hs []base.HostInfo) {
+func showHostData(hs []hostinfo.HostInfo) {
 	// fmt.Printf("\x1bc")
 	fmt.Printf("\x1b[2J")
 	sort.Slice(hs, func(i, j int) bool {
@@ -33,7 +34,7 @@ func User() {
 		client := rpc.NewClient(conn)
 
 		//调用方法
-		hs := []base.HostInfo{}
+		hs := []hostinfo.HostInfo{}
 		err = client.Call("Server.GetData", 1, &hs)
 		showHostData(hs)
 		if err != nil {

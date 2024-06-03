@@ -5,60 +5,88 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"hostListen/base"
+	"gohost/base"
+	hostinfo "gohost/hostInfo"
 	"log"
 	"net/rpc"
 	"sync"
 	"time"
 )
 
-var sm = &sync.Map{}
+// var sm = &sync.Map{}
 
 type Server struct {
+	data map[string]*hostinfo.HostInfo
+	ch   chan func()
 }
 
-func (l *Server) GetData(h int, result *[]base.HostInfo) error {
-	*result = make([]base.HostInfo, 10)
+func (l *Server) GetData() map[string]*hostinfo.HostInfo {
+	return l.data
+}
+
+func (l *Server) Run(h *hostinfo.HostInfo) error {
+
+	if l.data == nil {
+		l.data = make(map[string]*hostinfo.HostInfo, 10)
+	}
+
+	if l.ch == nil {
+		l.ch = make(chan func(), 1000)
+	}
+
+	go func() {
+		f := <-l.ch
+		f()
+	}()
+
+	// 离线监测
+	go func() {
+		t := time.NewTicker(time.Minute)
+		for {
+			<-t.C
+
+			l.ch <- func() {
+				deleteKey := []string{}
+				for k, h := range l.data {
+					t := int(time.Now().Unix()) - h.Date
+					if t > int(base.LosTime.Seconds()) {
+						// alert
+						base.Notifys.Send("host lost " + h.HostName + "  " + h.Sid + h.String())
+						deleteKey = append(deleteKey, k)
+					}
+				}
+
+				for _, v := range deleteKey {
+					delete(l.data, v)
+				}
+			}
+		}
+	}()
+
 	return nil
 }
-func (l *Server) Save(h *base.HostInfo, result *string) error {
-	*result = "I see"
-	log.Println("recive a msg")
+
+func (l *Server) Save(h *hostinfo.HostInfo) error {
 	if h.Sid == "" {
 		return errors.New("sid is null")
 	}
+	revTime := time.Now()
+	h.Date = int(revTime.Unix())
+	l.ch <- func() {
 
-	// find new host
-	_, ok := sm.Load(h.Sid)
-	if !ok && time.Since(base.Uptime) > time.Minute {
-		log.Println("find a new host")
-		base.Notifys.Send("host find " + h.HostName + "  " + h.Sid + h.String())
+		// find new host
+		if l.data[h.Sid] == nil && time.Since(base.Uptime) > time.Minute {
+			log.Println("find a new host")
+			base.Notifys.Send("host find " + h.HostName + "  " + h.Sid + h.String())
+		}
+
+		l.data[h.Sid] = h
+		log.Printf("Save host %s in %v", h.Sid, time.Since(revTime))
 	}
-
-	// 使用系统时间
-	h.Date = int(time.Now().Unix())
-	sm.Store(h.Sid, h)
 
 	return base.DB.Save(h).Error
 }
-func Listen() {
-	t := time.NewTicker(time.Minute)
-	for {
-		<-t.C
 
-		sm.Range(func(key, value any) bool {
-			h := value.(*base.HostInfo)
-			t := int(time.Now().Unix()) - h.Date
-			// fmt.Println(t, int(base.LosTime.Seconds()), h.Date)
-			if t > int(base.LosTime.Seconds()) {
-				// alert
-				base.Notifys.Send("host lost " + h.HostName + "  " + h.Sid + h.String())
-				sm.Delete(key)
-			}
-			return true
-		})
-	}
-}
 func TlsService() {
 	//注册服务
 	s := rpc.NewServer()
@@ -87,34 +115,4 @@ func TlsService() {
 	}
 	wg.Wait()
 
-	// https
-	// hs := &http.Server{
-	// 	Addr:           *base.Listen,
-	// 	Handler:        s,
-	// 	ReadTimeout:    10 * time.Second,
-	// 	WriteTimeout:   10 * time.Second,
-	// 	MaxHeaderBytes: 1 << 20,
-	// 	TLSConfig:      config,
-	// }
-	// fmt.Println("开始监听", *base.Listen)
-	// err := hs.ListenAndServeTLS("", "")
-
 }
-
-// func Service() {
-// 	//注册服务
-// 	s := rpc.NewServer()
-// 	s.Register(new(Server))
-// 	hs := &http.Server{
-// 		Addr:           base.Listen,
-// 		Handler:        s,
-// 		ReadTimeout:    10 * time.Second,
-// 		WriteTimeout:   10 * time.Second,
-// 		MaxHeaderBytes: 1 << 20,
-// 	}
-// 	fmt.Println("开始监听", base.Listen)
-// 	err := hs.ListenAndServe()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
