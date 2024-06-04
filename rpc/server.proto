@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+option go_package = "./rpc";
+
+service Service {
+  rpc Save (HostInfo) returns (HostInfoRes) {}
+  rpc Get (HostInfoRes) returns (HostInfo) {}
+}
+
+
+message HostInfoRes {}
+
+// package ProtobufView;
+message HostInfo {
+  int32 ID = 1;
+  string CreatedAt = 2;
+  string UpdatedAt = 3;
+  string DeletedAt = 4;
+  string Sid = 5;
+  string HostName = 6;
+  string SysInfo = 7;
+  string Ip = 8;
+  string Sip = 9;
+  Mem Mem = 10;
+  Host Host = 11;
+  Cpu Cpu = 12;
+  Disk Disk = 13;
+  int32 Date = 14;
+  string Time = 15;
+  string LTime = 16;
+}
+
+message Mem {
+  int32 total = 1;
+  int32 available = 2;
+  int32 used = 3;
+  float usedPercent = 4;
+  int32 free = 5;
+  int32 active = 6;
+  int32 inactive = 7;
+  int32 wired = 8;
+  int32 laundry = 9;
+  int32 buffers = 10;
+  int32 cached = 11;
+  int32 writeback = 12;
+  int32 dirty = 13;
+  int32 writebacktmp = 14;
+  int32 shared = 15;
+  int32 slab = 16;
+  int32 sreclaimable = 17;
+  int32 sunreclaim = 18;
+  int32 pagetables = 19;
+  int32 swapcached = 20;
+  int32 commitlimit = 21;
+  int32 committedas = 22;
+  int32 hightotal = 23;
+  int32 highfree = 24;
+  int32 lowtotal = 25;
+  int32 lowfree = 26;
+  int32 swaptotal = 27;
+  int32 swapfree = 28;
+  int32 mapped = 29;
+  int32 vmalloctotal = 30;
+  int32 vmallocused = 31;
+  int32 vmallocchunk = 32;
+  int32 hugepagestotal = 33;
+  int32 hugepagesfree = 34;
+  int32 hugepagesize = 35;
+}
+
+message Host {
+  string hostname = 1;
+  int32 uptime = 2;
+  int32 bootTime = 3;
+  int32 procs = 4;
+  string os = 5;
+  string platform = 6;
+  string platformFamily = 7;
+  string platformVersion = 8;
+  string kernelVersion = 9;
+  string kernelArch = 10;
+  string virtualizationSystem = 11;
+  string virtualizationRole = 12;
+  string hostid = 13;
+}
+
+message Info {
+  int32 cpu = 1;
+  string vendorId = 2;
+  string family = 3;
+  string model = 4;
+  int32 stepping = 5;
+  string physicalId = 6;
+  string coreId = 7;
+  int32 cores = 8;
+  string modelName = 9;
+  float mhz = 10;
+  int32 cacheSize = 11;
+  repeated string flags = 12;
+  string microcode = 13;
+}
+
+message Cpu {
+  int32 Count = 1;
+  int32 Percent = 2;
+  repeated Info Info = 3;
+}
+
+message Disk {
+  string path = 1;
+  string fstype = 2;
+  int32 total = 3;
+  int32 free = 4;
+  int32 used = 5;
+  float usedPercent = 6;
+  int32 inodesTotal = 7;
+  int32 inodesUsed = 8;
+  int32 inodesFree = 9;
+  float inodesUsedPercent = 10;
+}

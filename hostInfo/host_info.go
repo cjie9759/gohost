@@ -35,7 +35,7 @@ type HostInfo struct {
 type CPUinfo struct {
 	Count   int
 	Percent float64
-	Info    []cpu.InfoStat
+	Info    cpu.InfoStat
 }
 
 func (t *HostInfo) Bytes() []byte {
@@ -85,7 +85,7 @@ func GetHostInfo() *HostInfo {
 		Cpu: CPUinfo{
 			Count:   cc,
 			Percent: ct[0],
-			Info:    cn},
+			Info:    cn[0]},
 		Disk:  d,
 		Date:  int(time.Now().Unix()),
 		Time:  time.Now(),

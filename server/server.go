@@ -24,7 +24,7 @@ func (l *Server) GetData() map[string]*hostinfo.HostInfo {
 	return l.data
 }
 
-func (l *Server) Run(h *hostinfo.HostInfo) error {
+func (l *Server) Run() error {
 
 	if l.data == nil {
 		l.data = make(map[string]*hostinfo.HostInfo, 10)
