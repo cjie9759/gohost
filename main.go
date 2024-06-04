@@ -3,7 +3,6 @@ package main
 import (
 	"gohost/base"
 	"gohost/client"
-	"gohost/server"
 	"gohost/user"
 )
 
@@ -12,7 +11,7 @@ func main() {
 
 	switch {
 	case base.Is_server:
-		server.TlsService()
+		// server.TlsService()
 	case base.Is_user:
 		user.User()
 	default:

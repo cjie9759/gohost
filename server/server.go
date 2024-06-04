@@ -1,15 +1,10 @@
 package server
 
 import (
-	"crypto/tls"
-	"crypto/x509"
 	"errors"
-	"fmt"
 	"gohost/base"
 	hostinfo "gohost/hostInfo"
 	"log"
-	"net/rpc"
-	"sync"
 	"time"
 )
 
@@ -87,32 +82,7 @@ func (l *Server) Save(h *hostinfo.HostInfo) error {
 	return base.DB.Save(h).Error
 }
 
-func TlsService() {
-	//注册服务
-	s := rpc.NewServer()
-	s.Register(new(Server))
-
-	cert, _ := tls.X509KeyPair(base.SCert, base.SKey)
-	certPool := x509.NewCertPool()
-	certPool.AppendCertsFromPEM(base.CCert)
-	config := &tls.Config{
-		Certificates: []tls.Certificate{cert},
-		ClientAuth:   tls.RequireAndVerifyClientCert,
-		ClientCAs:    certPool,
-	}
-	wg := &sync.WaitGroup{}
-	for _, v := range base.Listen {
-		wg.Add(1)
-		go func(v string) {
-			l, err := tls.Listen("tcp", v, config)
-			fmt.Println("开始监听", v)
-			s.Accept(l)
-			if err != nil {
-				log.Fatalln(err)
-			}
-			wg.Done()
-		}(v)
-	}
-	wg.Wait()
+type ServerInterface interface {
+func (l *Server) Save(h *hostinfo.HostInfo) error 
 
 }

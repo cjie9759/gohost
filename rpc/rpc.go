@@ -1,40 +1,49 @@
 package rpc
 
 import (
-	context "context"
+	"crypto/tls"
+	"crypto/x509"
+	"fmt"
 	"gohost/base"
 	hostinfo "gohost/hostInfo"
 	"gohost/server"
 	"log"
-	"net"
+	"net/rpc"
 	sync "sync"
-
-	"github.com/shirou/gopsutil/mem"
-	grpc "google.golang.org/grpc"
 )
 
-func RPCService() {
-
+func TlsService() {
 	se := server.Server{}
 	se.Run()
+
+	//注册服务
+	s := rpc.NewServer()
+	s.Register(se)
+
+	cert, _ := tls.X509KeyPair(base.SCert, base.SKey)
+	certPool := x509.NewCertPool()
+	certPool.AppendCertsFromPEM(base.CCert)
+	config := &tls.Config{
+		Certificates: []tls.Certificate{cert},
+		ClientAuth:   tls.RequireAndVerifyClientCert,
+		ClientCAs:    certPool,
+	}
 
 	wg := &sync.WaitGroup{}
 	for _, v := range base.Listen {
 		wg.Add(1)
 		go func(v string) {
-			lis, err := net.Listen("tcp", v)
+			l, err := tls.Listen("tcp", v, config)
+			fmt.Println("开始监听", v)
+			s.Accept(l)
 			if err != nil {
-				log.Fatalf("failed to listen: %v", err)
+				log.Fatalln(err)
 			}
-
-			gs := grpc.NewServer()
-			RegisterServiceServer(gs, &Server{s: &se})
-			if err := gs.Serve(lis); err != nil {
-				log.Fatalf("failed to serve: %v", err)
-			}
+			wg.Done()
 		}(v)
 	}
 	wg.Wait()
+
 }
 
 //	type ServiceServer interface {
@@ -45,22 +54,13 @@ type Server struct {
 	s *server.Server
 }
 
-func (s *Server) Save(c context.Context, h *HostInfo) (*HostInfoRes, error) {
-
-	s.s.Save(&hostinfo.HostInfo{
-		Sid:      h.Sid,
-		HostName: h.HostName,
-		SysInfo:  h.SysInfo,
-		Ip:       h.Ip,
-		Sip:      h.Sip,
-		Mem:      h.Mem.(*mem.VirtualMemoryStat),
-		Host:     h.Host,
-		Cpu:      h.Cpu,
-		Disk:     h.Disk,
-		Date:     h.Date,
-		Time:     h.Time,
-		LTime:    h.LTime,
-	})
-
+func (s *Server) Save(h *hostinfo.HostInfo, r *res) error {
+	return s.s.Save(h)
 }
-func (s *Server) Get(c context.Context, h *HostInfoRes) (*HostInfo, error) {}
+func (s *Server) GetData(r *req, res map[string]*hostinfo.HostInfo) error {
+	res = s.s.GetData()
+	return nil
+}
+
+type res string
+type req string
