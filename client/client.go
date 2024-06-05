@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"gohost/base"
 	hostinfo "gohost/hostInfo"
+	"gohost/server"
 	"log"
 	"net/rpc"
 	"sync"
@@ -78,4 +79,27 @@ func client(Lis string) {
 		<-t.C
 		go f()
 	}
+}
+
+type clientv2 struct {
+	s server.ServerInterface
+}
+
+func (c *clientv2) Run() {
+	if base.Name != "" {
+		base.Name = base.Name + "----"
+	}
+
+	t := time.NewTicker(time.Minute / 10)
+	defer t.Stop()
+
+	var err error
+	for {
+		<-t.C
+		err = c.s.Save(hostinfo.GetHostInfo())
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
 }

@@ -83,6 +83,6 @@ func (l *Server) Save(h *hostinfo.HostInfo) error {
 }
 
 type ServerInterface interface {
-func (l *Server) Save(h *hostinfo.HostInfo) error 
-
+	Save(h *hostinfo.HostInfo) error
+	GetData() map[string]*hostinfo.HostInfo
 }

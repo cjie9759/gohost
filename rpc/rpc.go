@@ -64,3 +64,54 @@ func (s *Server) GetData(r *req, res map[string]*hostinfo.HostInfo) error {
 
 type res string
 type req string
+
+func NewClient(lis string) server.ServerInterface {
+	return &client{lis: lis}
+}
+
+type client struct {
+	cfg *tls.Config
+	c   *rpc.Client
+	lis string
+}
+
+func (c *client) con() {
+
+	certPool := x509.NewCertPool()
+	certPool.AppendCertsFromPEM(base.SCert)
+
+	cert, _ := tls.X509KeyPair(base.CCert, base.CKey)
+	c.cfg = &tls.Config{
+		InsecureSkipVerify: true,
+		Certificates:       []tls.Certificate{cert},
+		RootCAs:            certPool,
+	}
+
+	conn, err := tls.Dial("tcp", c.lis, c.cfg)
+	if err != nil {
+
+	}
+	c.c = rpc.NewClient(conn)
+}
+func (c *client) Save(h *hostinfo.HostInfo) error {
+	res := ""
+	err := c.c.Call("Server.Save", hostinfo.GetHostInfo(), &res)
+	if err != nil {
+		log.Println(err)
+		c.con()
+		return err
+	}
+	log.Println("server return", res)
+	return nil
+}
+func (c *client) GetData() map[string]*hostinfo.HostInfo {
+	res := map[string]*hostinfo.HostInfo{}
+	err := c.c.Call("Server.GetData", "", res)
+	if err != nil {
+		log.Println(err)
+		c.con()
+		return nil
+	}
+	log.Println("server return", res)
+	return nil
+}
