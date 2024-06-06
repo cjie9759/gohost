@@ -9,7 +9,8 @@ import (
 	"gohost/server"
 	"log"
 	"net/rpc"
-	sync "sync"
+	"sync"
+	"time"
 )
 
 func TlsService() {
@@ -29,21 +30,25 @@ func TlsService() {
 		ClientCAs:    certPool,
 	}
 
+	t := time.NewTicker(time.Millisecond)
 	wg := &sync.WaitGroup{}
+	wg.Add(len(base.Listen))
 	for _, v := range base.Listen {
-		wg.Add(1)
-		go func(v string) {
-			l, err := tls.Listen("tcp", v, config)
-			fmt.Println("开始监听", v)
-			s.Accept(l)
-			if err != nil {
-				log.Fatalln(err)
+		lis := v
+		go func() {
+			defer wg.Done()
+			for {
+				l, err := tls.Listen("tcp", lis, config)
+				fmt.Println("开始监听", lis)
+				s.Accept(l)
+				if err != nil {
+					log.Fatalln(err)
+				}
+				<-t.C
 			}
-			wg.Done()
-		}(v)
+		}()
 	}
 	wg.Wait()
-
 }
 
 //	type ServiceServer interface {

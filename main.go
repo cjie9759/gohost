@@ -3,7 +3,9 @@ package main
 import (
 	"gohost/base"
 	"gohost/client"
+	"gohost/rpc"
 	"gohost/user"
+	"sync"
 )
 
 func main() {
@@ -11,11 +13,20 @@ func main() {
 
 	switch {
 	case base.Is_server:
-		// server.TlsService()
+		rpc.TlsService()
 	case base.Is_user:
 		user.User()
 	default:
-		client.Client()
+		wg := &sync.WaitGroup{}
+		wg.Add(len(base.Listen))
+		for _, v := range base.Listen {
+			s := v
+			go func() {
+				defer wg.Done()
+				client.NewClien(rpc.NewClient(s)).Run()
+			}()
+		}
+		wg.Wait()
 	}
 
 	// 客户端
