@@ -30,8 +30,10 @@ func (l *Server) Run() error {
 	}
 
 	go func() {
-		f := <-l.ch
-		f()
+		for {
+			f := <-l.ch
+			f()
+		}
 	}()
 
 	// 离线监测
@@ -47,6 +49,7 @@ func (l *Server) Run() error {
 					if t > int(base.LosTime.Seconds()) {
 						// alert
 						base.Notifys.Send("host lost " + h.HostName + "  " + h.Sid + h.String())
+						log.Println("host lost " + h.HostName + "  " + h.Sid + h.String())
 						deleteKey = append(deleteKey, k)
 					}
 				}

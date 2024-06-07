@@ -3,11 +3,16 @@ package base
 import (
 	_ "embed"
 	"flag"
+	"log"
+	"os"
 	"sync"
 	"time"
 
 	"github.com/cjie9759/notify"
+	"github.com/cjie9759/notify/wxrobot"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var HostData *sync.Map
@@ -45,30 +50,35 @@ func Init() {
 		Listen = Listen[1:]
 	}
 	if Is_server {
+
+		webhook := os.Getenv("GOHOST_WEBHOOK")
+		dbdsn := os.Getenv("GOHOST_DSN")
+		dbdsn = "./test.db"
+
 		Uptime = time.Now()
 
-		// Notifys = notify.NewNotifyGrop([]notify.Notify{
-		// 	wxrobot.NewNotify(wxrobot.Msgtype_text, webhook),
-		// 	mail.NewMail(mail.Cfg{User: MAIL_USER, Pwd: MAIL_PWD, From: MAIL_FROM, To: []string{MAIL_TEST_TO}, Sub: "gohost"}),
-		// 	cqrobot.NewNotify(CQ_GROUP_ID, CQ_URL),
-		// })
+		Notifys = notify.NewNotifyGrop([]notify.Notify{
+			wxrobot.NewNotify(wxrobot.Msgtype_text, webhook),
+			// mail.NewMail(mail.Cfg{User: MAIL_USER, Pwd: MAIL_PWD, From: MAIL_FROM, To: []string{MAIL_TEST_TO}, Sub: "gohost"}),
+			// cqrobot.NewNotify(CQ_GROUP_ID, CQ_URL),
+		})
 
-		// var err error
-		// DB, err = gorm.Open(sqlite.Open(dbdsn), &gorm.Config{
-		// 	Logger: logger.New(
-		// 		log.New(os.Stdout, "\r\n", log.LstdFlags),
-		// 		logger.Config{
-		// 			SlowThreshold:             time.Second / 5, // Slow SQL threshold
-		// 			LogLevel:                  logger.Info,     // Log level
-		// 			IgnoreRecordNotFoundError: false,           // Ignore ErrRecordNotFound error for logger
-		// 			// ParameterizedQueries:      true,          // Don't include params in the SQL log
-		// 			Colorful: true, // Disable color
-		// 		})})
-		// if err != nil {
-		// 	log.Panic("db connect fail:", err)
-		// }
+		var err error
+		DB, err = gorm.Open(sqlite.Open(dbdsn), &gorm.Config{
+			Logger: logger.New(
+				log.New(os.Stdout, "\r\n", log.LstdFlags),
+				logger.Config{
+					SlowThreshold:             time.Second / 5, // Slow SQL threshold
+					LogLevel:                  logger.Info,     // Log level
+					IgnoreRecordNotFoundError: false,           // Ignore ErrRecordNotFound error for logger
+					// ParameterizedQueries:      true,          // Don't include params in the SQL log
+					Colorful: true, // Disable color
+				})})
+		if err != nil {
+			log.Panic("db connect fail:", err)
+		}
 
-		// err = DB.AutoMigrate(&HostInfo{})
+		// err = DB.AutoMigrate(&hostinfo.HostInfo{})
 		// if err != nil {
 		// 	log.Panic("db connect fail:", err)
 		// }
@@ -88,17 +98,17 @@ func Init() {
 // //go:embed pem/fullchain.pem
 // var Cert []byte
 
-// //go:embed pem/privkey.pem
+// go:embed pem/privkey.pem
 // var Key []byte
 
-// / go:embed pem/client.crt
+//go:embed pem/client.crt
 var CCert []byte
 
-// /go:embed pem/client.key
+//go:embed pem/client.key
 var CKey []byte
 
-// /go:embed pem/server.crt
+//go:embed pem/server.crt
 var SCert []byte
 
-// /go:embed pem/server.key
+//go:embed pem/server.key
 var SKey []byte

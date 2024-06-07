@@ -19,7 +19,7 @@ func TlsService() {
 
 	//注册服务
 	s := rpc.NewServer()
-	s.Register(se)
+	s.Register(&Server{&se})
 
 	cert, _ := tls.X509KeyPair(base.SCert, base.SKey)
 	certPool := x509.NewCertPool()
@@ -59,16 +59,16 @@ type Server struct {
 	s *server.Server
 }
 
-func (s *Server) Save(h *hostinfo.HostInfo, r *res) error {
+func (s *Server) Save(h *hostinfo.HostInfo, r *Res) error {
 	return s.s.Save(h)
 }
-func (s *Server) GetData(r *req, res map[string]*hostinfo.HostInfo) error {
+func (s *Server) GetData(r *Req, res map[string]*hostinfo.HostInfo) error {
 	res = s.s.GetData()
 	return nil
 }
 
-type res string
-type req string
+type Res string
+type Req string
 
 func NewClient(lis string) server.ServerInterface {
 	return &client{lis: lis}
@@ -92,15 +92,31 @@ func (c *client) con() {
 		RootCAs:            certPool,
 	}
 
-	conn, err := tls.Dial("tcp", c.lis, c.cfg)
-	if err != nil {
-
+	var (
+		conn *tls.Conn
+		err  error
+	)
+	t := time.NewTicker(time.Millisecond)
+	for {
+		conn, err = tls.Dial("tcp", c.lis, c.cfg)
+		if err != nil {
+			log.Println(err)
+			<-t.C
+			continue
+		}
+		if conn != nil {
+			break
+		}
 	}
 	c.c = rpc.NewClient(conn)
 }
 func (c *client) Save(h *hostinfo.HostInfo) error {
+	if c.c == nil {
+		c.con()
+	}
+
 	res := ""
-	err := c.c.Call("Server.Save", hostinfo.GetHostInfo(), &res)
+	err := c.c.Call("Server.Save", h, &res)
 	if err != nil {
 		log.Println(err)
 		c.con()
@@ -110,6 +126,10 @@ func (c *client) Save(h *hostinfo.HostInfo) error {
 	return nil
 }
 func (c *client) GetData() map[string]*hostinfo.HostInfo {
+	if c.c == nil {
+		c.con()
+	}
+
 	res := map[string]*hostinfo.HostInfo{}
 	err := c.c.Call("Server.GetData", "", res)
 	if err != nil {

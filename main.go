@@ -3,8 +3,10 @@ package main
 import (
 	"gohost/base"
 	"gohost/client"
+	hostinfo "gohost/hostInfo"
 	"gohost/rpc"
 	"gohost/user"
+	"log"
 	"sync"
 )
 
@@ -13,6 +15,11 @@ func main() {
 
 	switch {
 	case base.Is_server:
+		err := base.DB.AutoMigrate(&hostinfo.HostInfo{})
+		if err != nil {
+			log.Panic("db connect fail:", err)
+		}
+
 		rpc.TlsService()
 	case base.Is_user:
 		user.User()
