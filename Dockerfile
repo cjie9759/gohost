@@ -4,5 +4,5 @@ FROM docker.io/alpine
 
 WORKDIR /app
 
-COPY hostListen /app/hostListen
-ENTRYPOINT ["/app/hostListen"]
+COPY gohost /app/gohost
+ENTRYPOINT ["/app/gohost"]

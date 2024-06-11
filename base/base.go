@@ -53,12 +53,12 @@ func Init() {
 
 		webhook := os.Getenv("GOHOST_WEBHOOK")
 		dbdsn := os.Getenv("GOHOST_DSN")
-		dbdsn = "./test.db"
+		// dbdsn = "./test.db"
 
 		Uptime = time.Now()
 
 		Notifys = notify.NewNotifyGrop([]notify.Notify{
-			wxrobot.NewNotify(wxrobot.Msgtype_text, webhook),
+			wxrobot.NewNotify(wxrobot.Msgtype_text, webhook, true),
 			// mail.NewMail(mail.Cfg{User: MAIL_USER, Pwd: MAIL_PWD, From: MAIL_FROM, To: []string{MAIL_TEST_TO}, Sub: "gohost"}),
 			// cqrobot.NewNotify(CQ_GROUP_ID, CQ_URL),
 		})

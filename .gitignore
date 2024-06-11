@@ -6,3 +6,4 @@ launch.json
 hostListen
 .ssh
 *.db
+gohost

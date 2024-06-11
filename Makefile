@@ -6,4 +6,8 @@ pem:
 	openssl genpkey -algorithm ED25519 -out base/pem/client.key &&openssl req -new -x509 -key base/pem/client.key -out base/pem/client.crt -days 3650
 
 .PHONY:\
-	pem
+	pem \
+	build
+
+build:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-w -s"  .

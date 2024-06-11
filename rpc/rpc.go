@@ -39,11 +39,11 @@ func TlsService() {
 			defer wg.Done()
 			for {
 				l, err := tls.Listen("tcp", lis, config)
-				fmt.Println("开始监听", lis)
-				s.Accept(l)
 				if err != nil {
 					log.Fatalln(err)
 				}
+				fmt.Println("开始监听", lis)
+				s.Accept(l)
 				<-t.C
 			}
 		}()
@@ -96,7 +96,7 @@ func (c *client) con() {
 		conn *tls.Conn
 		err  error
 	)
-	t := time.NewTicker(time.Millisecond)
+	t := time.NewTicker(time.Millisecond * 100)
 	for {
 		conn, err = tls.Dial("tcp", c.lis, c.cfg)
 		if err != nil {

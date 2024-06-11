@@ -2,6 +2,8 @@ module gohost
 
 go 1.22.3
 
+
+replace github.com/cjie9759/notify => ../notify
 require (
 	github.com/cjie9759/notify v0.0.0-20231001093751-c6f38acd573a
 	github.com/shirou/gopsutil v3.21.11+incompatible
