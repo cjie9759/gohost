@@ -1,0 +1,13 @@
+[Unit]
+After=network.target nss-lookup.target
+
+[Service]
+User=root
+ExecStart=/root/gohost -l :17126 -s -t 100s
+Restart=on-failure
+Environment="GOHOST_WEBHOOK=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=7ac5d6b3-0cad-4703-bfdb-6444d17ccaf0"
+Environment="GOHOST_DSN=/gohost.db"
+# RestartPreventExitStatus=23
+RestartSec=3
+[Install]
+WantedBy=multi-user.target

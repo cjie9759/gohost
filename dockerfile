@@ -1,0 +1,9 @@
+# https://github.com/librespeed/speedtest-go/releases/download/v1.1.4/speedtest-go_1.1.4_linux_amd64.tar.gz
+
+FROM alpine
+# FROM docker.cjic.win/library/debian
+
+WORKDIR /app
+
+COPY gohost /app/gohost
+ENTRYPOINT ["/app/gohost"]

@@ -6,11 +6,17 @@ import (
 	hostinfo "gohost/hostInfo"
 	"gohost/rpc"
 	"log"
+	"os"
 	"testing"
 )
 
 func init() {
 	base.IsTest = true
+
+	os.Setenv("GOHOST_DSN", "file::memory:?cache=shared")
+	if err != nil {
+		log.Println(err)
+	}
 }
 func Test(t *testing.T) {
 	base.Is_server = true

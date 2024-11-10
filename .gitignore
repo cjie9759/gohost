@@ -7,3 +7,4 @@ hostListen
 .ssh
 *.db
 gohost
+gohost-cgo
