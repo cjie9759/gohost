@@ -62,8 +62,8 @@ type Server struct {
 func (s *Server) Save(h *hostinfo.HostInfo, r *Res) error {
 	return s.s.Save(h)
 }
-func (s *Server) GetData(r *Req, res map[string]*hostinfo.HostInfo) error {
-	res = s.s.GetData()
+func (s *Server) GetData(r *Req, res *map[string]*hostinfo.HostInfo) error {
+	*res = s.s.GetData()
 	return nil
 }
 
@@ -131,12 +131,12 @@ func (c *client) GetData() map[string]*hostinfo.HostInfo {
 	}
 
 	res := map[string]*hostinfo.HostInfo{}
-	err := c.c.Call("Server.GetData", "", res)
+	err := c.c.Call("Server.GetData", "", &res)
 	if err != nil {
 		log.Println(err)
 		c.con()
 		return nil
 	}
 	log.Println("server return", res)
-	return nil
+	return res
 }
