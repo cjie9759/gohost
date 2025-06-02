@@ -24,6 +24,7 @@ dqb: build
 	scp ./gohost  qb:/root/hostl
 	ssh qb "systemctl restart cj_hl.service"
 dt:
+	scp ./gohost.service t:/etc/systemd/system/
 	GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-w -s"  .
 	ssh t "systemctl stop gohost.service"
 	scp ./gohost t:/root/gohost
