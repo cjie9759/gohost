@@ -92,8 +92,8 @@ func Init() {
 // openssl req -new -x509 -key server.key -out server.crt -days 3650
 // # 只读权限
 // chmod 400 server.key
-// openssl genrsa -out server.key 2048 &&openssl req -new -x509 -key server.key -out server.crt -days 3650
-// openssl genrsa -out client.key 2048 &&openssl req -new -x509 -key client.key -out client.crt -days 3650
+// openssl genpkey -algorithm ED25519 -out server.key &&openssl req -new -x509 -key server.key -out server.crt -subj "/CN=localhost" -days 3650
+// openssl genpkey -algorithm ED25519 -out client.key &&openssl req -new -x509 -key client.key -out client.crt -subj "/CN=localhost" -days 3650
 
 // //go:embed pem/fullchain.pem
 // var Cert []byte
